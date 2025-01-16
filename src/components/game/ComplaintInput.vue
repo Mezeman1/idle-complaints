@@ -142,13 +142,22 @@ let cooldownInterval: ReturnType<typeof setInterval> | undefined
 function handleWordAssist() {
   if (wordAssistCooldown.value) return
 
-  const words = store.currentComplaint.split(' ')
-  const typedWords = store.typedText.split(' ')
-  const nextWordIndex = typedWords.length - 1
+  const currentComplaint = store.currentComplaint
+  const typedText = store.typedText
+  const needsSpace = typedText.length > 0 && !typedText.endsWith(' ')
 
-  if (nextWordIndex < words.length) {
-    const newText = words.slice(0, nextWordIndex + 1).join(' ')
-    store.typedText = newText + ' '
+  // Get the next word from the complaint
+  const remainingText = currentComplaint.slice(typedText.length).trim()
+  const nextWord = remainingText.split(' ')[0]
+
+  if (nextWord) {
+    store.typedText += (needsSpace ? ' ' : '') + nextWord + ' '
+    lastWordAssistTime.value = Date.now()
+
+    // Check if complaint is complete
+    if (store.typedText.trim() === currentComplaint.trim()) {
+      completeComplaint()
+    }
   }
 
   // Start cooldown
