@@ -23,13 +23,13 @@ function getHiddenText(text: string): string {
 </script>
 
 <template>
-    <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div class="min-h-screen bg-theme">
         <div class="container mx-auto px-4 py-8">
             <div class="mb-8">
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Complaint Collection</h1>
+                <h1 class="text-2xl font-bold text-theme mb-4">Complaint Collection</h1>
 
                 <!-- Instructions Card -->
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 mb-6">
+                <div class="card-theme rounded-lg shadow-lg p-4 mb-6">
                     <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">How to Collect</h2>
                     <div class="prose dark:prose-invert max-w-none">
                         <ul class="text-sm text-gray-600 dark:text-gray-300 list-disc pl-4 space-y-2">
@@ -47,7 +47,7 @@ function getHiddenText(text: string): string {
                 </div>
 
                 <!-- Collection Stats -->
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 mb-6">
+                <div class="card-theme rounded-lg shadow-lg p-4 mb-6">
                     <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-3">Collection Progress</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
@@ -75,8 +75,8 @@ function getHiddenText(text: string): string {
                 <!-- Complaint Collection Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div v-for="complaint in complaints" :key="complaint.id"
-                        class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 transition-all duration-200"
-                        :class="{ 'opacity-80 dark:opacity-60': !collectionStore.getComplaintStats(complaint.id) }">
+                        class="card-theme rounded-lg shadow-lg p-4 transition-all duration-200"
+                        :class="{ 'opacity-80': !collectionStore.getComplaintStats(complaint.id) }">
                         <div class="flex flex-col space-y-2">
                             <p class="text-gray-900 dark:text-white font-medium"
                                 :class="{ 'font-mono': !collectionStore.getComplaintStats(complaint.id) }">
@@ -95,7 +95,7 @@ function getHiddenText(text: string): string {
                                 <div class="flex justify-between items-center mt-1">
                                     <span>Best Accuracy: {{
                                         Math.floor(collectionStore.getComplaintStats(complaint.id)?.bestAccuracy || 0)
-                                    }}%</span>
+                                        }}%</span>
                                     <span>Best Speed: {{
                                         Math.floor(collectionStore.getComplaintStats(complaint.id)?.bestSpeed || 0) }}
                                         c/s</span>

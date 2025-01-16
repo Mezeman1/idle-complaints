@@ -6,14 +6,14 @@ const achievementStore = useAchievementStore()
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+  <div class="min-h-screen bg-theme">
     <div class="container mx-auto px-4 py-8">
       <div class="mb-8">
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Achievements</h1>
+        <h1 class="text-2xl font-bold text-theme mb-4">Achievements</h1>
 
         <!-- Achievement Stats -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 mb-6">
-          <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-3">Active Bonuses</h2>
+        <div class="card-theme rounded-lg shadow-lg p-4 mb-6">
+          <h2 class="text-lg font-semibold text-theme mb-3">Active Bonuses</h2>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
               <div class="text-sm text-gray-500 dark:text-gray-400">Point Multiplier</div>
@@ -36,15 +36,15 @@ const achievementStore = useAchievementStore()
           </div>
         </div>
 
-        <!-- Achievement List -->
+        <!-- Achievement Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div v-for="achievement in achievementStore.achievements" :key="achievement.id"
-            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 transition-all duration-200"
-            :class="{ 'opacity-50 dark:opacity-40': !achievement.earned }">
+            class="card-theme rounded-lg shadow-lg p-4 transition-all duration-200"
+            :class="{ 'opacity-50': !achievement.earned }">
             <div class="flex items-center space-x-3">
               <span class="text-2xl">{{ achievement.icon }}</span>
               <div>
-                <h3 class="font-semibold text-gray-900 dark:text-white">
+                <h3 class="font-semibold text-theme">
                   {{ achievement.name }}
                 </h3>
                 <p class="text-sm text-gray-600 dark:text-gray-400">
@@ -67,7 +67,8 @@ const achievementStore = useAchievementStore()
               </div>
               <!-- Progress Text -->
               <div class="text-xs text-gray-500 dark:text-gray-400">
-                Progress: {{ formatNumber(Math.min(achievement.progress, achievement.requirement)) }} / {{ formatNumber(achievement.requirement) }}
+                Progress: {{ formatNumber(Math.min(achievement.progress, achievement.requirement)) }} / {{
+                  formatNumber(achievement.requirement) }}
                 ({{ Math.min(Math.floor((achievement.progress / achievement.requirement) * 100), 100) }}%)
               </div>
 
@@ -78,8 +79,8 @@ const achievementStore = useAchievementStore()
               }">
                 Bonus: +{{ achievement.bonus.amount }}
                 {{ achievement.bonus.type === 'multiplier' ? 'x points' :
-                   achievement.bonus.type === 'auto_typing' ? ' chars/sec' :
-                   ' word assist speed' }}
+                  achievement.bonus.type === 'auto_typing' ? ' chars/sec' :
+                    ' word assist speed' }}
               </div>
             </div>
           </div>

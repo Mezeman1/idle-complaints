@@ -302,7 +302,7 @@ function getSpeedBarColor(multiplier: number): string {
 <template>
   <div class="max-w-xl mx-auto mt-8">
     <!-- Complaint Input Card -->
-    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-lg mb-4">
+    <div class="card-theme rounded-lg shadow-lg mb-4">
       <!-- Points popup container -->
       <div class="relative h-8">
         <div v-for="popup in popups" :key="popup.id" class="absolute left-1/2"
@@ -386,14 +386,14 @@ function getSpeedBarColor(multiplier: number): string {
     </div>
 
     <!-- Previous Complaint Preview -->
-    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-4 mb-4">
-      <div class="text-sm text-gray-500 dark:text-gray-400">
+    <div class="card-theme rounded-lg shadow-lg p-4 mb-4">
+      <div class="text-sm text-theme opacity-80">
         Previous complaint worth:
-        <span class="font-medium text-gray-700 dark:text-gray-300">
+        <span class="font-medium text-theme">
           {{ formatNumber(calculatePoints(store.currentComplaint, 100) * upgradeStore.getTotalMultiplier) }} points
         </span>
         at 100% accuracy
-        <span v-if="currentMultiplier" class="text-blue-500 dark:text-blue-400 ml-1">
+        <span v-if="currentMultiplier" class="text-primary">
           {{ currentMultiplier }}
         </span>
       </div>

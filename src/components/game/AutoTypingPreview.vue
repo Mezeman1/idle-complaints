@@ -74,23 +74,22 @@ onUnmounted(() => {
 
 <template>
   <div v-if="scorePerSecond.gt(0)" class="max-w-xl mx-auto mt-4">
-    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-lg">
+    <div class="card-theme rounded-lg shadow-lg">
       <div class="p-4">
         <div class="flex items-start space-x-3">
           <div class="flex-shrink-0">
-            <div class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
+            <div class="w-10 h-10 rounded-full bg-theme flex items-center justify-center">
               <span class="text-lg">🤖</span>
             </div>
           </div>
           <div class="flex-grow">
             <!-- Auto-typing preview -->
-            <div class="p-2 border border-gray-200 dark:border-gray-600 rounded-lg
-                      text-gray-600 dark:text-gray-300 font-mono text-sm min-h-[4rem]">
+            <div class="p-2 border border-theme rounded-lg text-theme font-mono text-sm min-h-[4rem]">
               {{ currentText }}<span class="animate-pulse">|</span>
             </div>
 
             <!-- Stats Bar -->
-            <div class="flex items-center justify-between mt-2 text-xs text-gray-500 dark:text-gray-400">
+            <div class="flex items-center justify-between mt-2 text-xs text-theme opacity-70">
               <span>Auto-Bot active</span>
               <span>{{ formatNumber(scorePerSecond) }} points/sec</span>
             </div>

@@ -2,34 +2,15 @@
   <div>
     <Navbar>
       <template #left>
-        <button @click="emit('update:currentTab', 'game')"
-          class="flex items-center px-3 py-2 rounded-md text-sm font-medium" :class="{
-            'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white': currentTab === 'game',
-            'text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700': currentTab !== 'game'
-          }">
-          Game
-        </button>
-        <button @click="emit('update:currentTab', 'achievements')"
-          class="flex items-center px-3 py-2 rounded-md text-sm font-medium" :class="{
-            'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white': currentTab === 'achievements',
-            'text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700': currentTab !== 'achievements'
-          }">
-          Achievements
-        </button>
-        <button @click="emit('update:currentTab', 'collection')"
-          class="flex items-center px-3 py-2 rounded-md text-sm font-medium" :class="{
-            'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white': currentTab === 'collection',
-            'text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700': currentTab !== 'collection'
-          }">
-          Collection
-        </button>
-        <button @click="emit('update:currentTab', 'themes')"
-          class="flex items-center px-3 py-2 rounded-md text-sm font-medium" :class="{
-            'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white': currentTab === 'themes',
-            'text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700': currentTab !== 'themes'
-          }">
-          Themes
-        </button>
+        <div class="flex space-x-1">
+          <button v-for="tab in tabs" :key="tab.id" @click="emit('update:currentTab', tab.id)"
+            class="px-4 py-2 text-sm font-medium transition-colors duration-150 border-b-2" :class="{
+              'text-theme border-primary': currentTab === tab.id,
+              'text-theme opacity-60 border-transparent hover:opacity-80 hover:border-primary hover:border-opacity-50': currentTab !== tab.id
+            }">
+            {{ tab.name }}
+          </button>
+        </div>
       </template>
     </Navbar>
   </div>
@@ -37,6 +18,13 @@
 
 <script setup lang="ts">
 import Navbar from '@/components/base/Navbar.vue'
+
+const tabs = [
+  { id: 'game', name: 'Game' },
+  { id: 'achievements', name: 'Achievements' },
+  { id: 'collection', name: 'Collection' },
+  { id: 'themes', name: 'Themes' },
+]
 
 defineProps<{
   currentTab: string
