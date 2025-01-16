@@ -5,10 +5,17 @@ import { ref } from 'vue'
 
 export const useAchievementStore = defineStore('achievements', {
   state: () => ({
-    achievements: achievements,
+    achievements,
     stats: {
       totalComplaints: 0,
       totalUpgrades: 0,
+      totalCharacters: 0,
+      perfectComplaints: 0,
+      fastComplaints: 0,
+      highSpeedComplaints: 0,
+      lastComplaintTime: 0,
+      lastAccuracy: 0,
+      lastSpeedMultiplier: 0,
     },
     notifications: [] as Achievement[],
   }),
@@ -79,8 +86,70 @@ export const useAchievementStore = defineStore('achievements', {
               this.unlockAchievement(achievement.id)
             }
             break
+
+          case 'speed_demon':
+            if (Date.now() - this.stats.lastComplaintTime < 10000) {
+              this.stats.fastComplaints++
+            } else {
+              this.stats.fastComplaints = 0
+            }
+            achievement.progress = this.stats.fastComplaints
+            if (this.stats.fastComplaints >= achievement.requirement) {
+              this.unlockAchievement(achievement.id)
+            }
+            break
+
+          case 'perfect_karen':
+            if (this.stats.lastAccuracy === 100) {
+              this.stats.perfectComplaints++
+            } else {
+              this.stats.perfectComplaints = 0
+            }
+            achievement.progress = this.stats.perfectComplaints
+            if (this.stats.perfectComplaints >= achievement.requirement) {
+              this.unlockAchievement(achievement.id)
+            }
+            break
+
+          case 'marathon_complainer':
+            achievement.progress = this.stats.totalCharacters
+            if (this.stats.totalCharacters >= achievement.requirement) {
+              this.unlockAchievement(achievement.id)
+            }
+            break
+
+          case 'night_shift':
+            const hour = new Date().getHours()
+            if (hour >= 22 || hour < 5) {
+              this.unlockAchievement(achievement.id)
+            }
+            break
+
+          case 'rapid_fire':
+            if (Date.now() - this.stats.lastComplaintTime < 30000) {
+              achievement.progress++
+            } else {
+              achievement.progress = 0
+            }
+            if (achievement.progress >= achievement.requirement) {
+              this.unlockAchievement(achievement.id)
+            }
+            break
+
+          case 'combo_master':
+            if (this.stats.lastSpeedMultiplier >= 2.5) {
+              this.stats.highSpeedComplaints++
+            } else {
+              this.stats.highSpeedComplaints = 0
+            }
+            achievement.progress = this.stats.highSpeedComplaints
+            if (this.stats.highSpeedComplaints >= achievement.requirement) {
+              this.unlockAchievement(achievement.id)
+            }
+            break
         }
       })
+      this.stats.lastComplaintTime = Date.now()
     },
 
     unlockAchievement(id: string) {
@@ -109,7 +178,17 @@ export const useAchievementStore = defineStore('achievements', {
           progress: savedAchievement?.progress || 0,
         }
       })
-      this.stats = savedData.stats || { totalComplaints: 0, totalUpgrades: 0 }
+      this.stats = {
+        totalComplaints: savedData.stats?.totalComplaints || 0,
+        totalUpgrades: savedData.stats?.totalUpgrades || 0,
+        totalCharacters: savedData.stats?.totalCharacters || 0,
+        perfectComplaints: savedData.stats?.perfectComplaints || 0,
+        fastComplaints: savedData.stats?.fastComplaints || 0,
+        highSpeedComplaints: savedData.stats?.highSpeedComplaints || 0,
+        lastComplaintTime: savedData.stats?.lastComplaintTime || 0,
+        lastAccuracy: savedData.stats?.lastAccuracy || 0,
+        lastSpeedMultiplier: savedData.stats?.lastSpeedMultiplier || 0,
+      }
     },
 
     getSaveState() {
@@ -117,6 +196,10 @@ export const useAchievementStore = defineStore('achievements', {
         achievements: this.achievements,
         stats: this.stats,
       }
+    },
+
+    addCharacters(count: number) {
+      this.stats.totalCharacters += count
     },
   },
 })

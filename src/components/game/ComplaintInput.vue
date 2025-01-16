@@ -92,8 +92,11 @@ function handleSubmit() {
     const finalPoints = multiplier.times(basePoints).times(typingSpeedMultiplier.value).round()
     store.addScore(finalPoints)
 
-    // Increment complaint counter and check achievements
+    // Track achievements
     achievementStore.incrementStat('totalComplaints')
+    achievementStore.addCharacters(store.typedText.length)
+    achievementStore.stats.lastAccuracy = similarity.value
+    achievementStore.stats.lastSpeedMultiplier = typingSpeedMultiplier.value
     achievementStore.checkAchievements(store)
 
     // Add popup
