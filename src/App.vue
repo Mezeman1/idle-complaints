@@ -7,16 +7,20 @@ import IndexPage from '@/pages/IndexPage.vue'
 import Achievements from '@/views/Achievements.vue'
 import Navigation from '@/components/base/Navigation.vue'
 import Collection from '@/views/Collection.vue'
+import Themes from '@/views/Themes.vue'
+import { useThemeStore } from '@/stores/theme-store'
 
 const achievementStore = useAchievementStore()
 const store = useStore()
 const currentTab = ref('game')
+const themeStore = useThemeStore()
 
 store.loadGame()
+themeStore.applyTheme(themeStore.currentTheme)
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+  <div class="min-h-screen bg-theme">
 
     <Navigation :current-tab="currentTab" @update:current-tab="currentTab = $event" />
 
@@ -28,6 +32,9 @@ store.loadGame()
     </div>
     <div v-show="currentTab === 'collection'">
       <Collection />
+    </div>
+    <div v-show="currentTab === 'themes'">
+      <Themes />
     </div>
 
     <div class="fixed bottom-0 right-0 z-50 space-y-2 p-4">

@@ -5,6 +5,7 @@ import { useUpgradeStore } from '@/stores/upgrade-store'
 import { upgradesList } from '@/data/upgrades'
 import { useAchievementStore } from '@/stores/achievement-store'
 import { useCollectionStore } from '@/stores/collection-store'
+import { useThemeStore } from '@/stores/theme-store'
 
 function rehydrateUpgrade(upgrade: Upgrade): Upgrade {
   return {
@@ -55,6 +56,9 @@ export const useStore = defineStore('main', {
       } else {
         document.documentElement.classList.remove('dark')
       }
+      // Reapply theme when dark mode changes
+      const themeStore = useThemeStore()
+      themeStore.applyTheme(themeStore.currentTheme)
     },
 
     setCurrentComplaint(complaint: string) {
@@ -79,6 +83,7 @@ export const useStore = defineStore('main', {
         upgrades: useUpgradeStore().getUpgradeState(),
         achievements: useAchievementStore().getSaveState(),
         collection: useCollectionStore().getSaveState(),
+        themes: useThemeStore().getSaveState(),
       }
       localStorage.setItem('idleComplaintsSave', JSON.stringify(saveData))
     },
@@ -107,6 +112,12 @@ export const useStore = defineStore('main', {
         if (data.collection) {
           const collectionStore = useCollectionStore()
           collectionStore.initializeFromSave(data.collection)
+        }
+
+        // Initialize themes with saved state
+        if (data.themes) {
+          const themeStore = useThemeStore()
+          themeStore.initializeFromSave(data.themes)
         }
 
         // Calculate offline progress

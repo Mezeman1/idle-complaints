@@ -42,6 +42,10 @@ export interface GameSaveData {
       totalUpgrades: number
     }
   }
+  themes?: {
+    currentTheme: string
+    unlockedThemes: string[]
+  }
 }
 
 export interface Achievement {
