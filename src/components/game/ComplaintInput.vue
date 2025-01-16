@@ -12,6 +12,8 @@ import { useAchievementStore } from '@/stores/achievement-store'
 const store = useStore()
 const upgradeStore = useUpgradeStore()
 const achievementStore = useAchievementStore()
+const typingStartTime = ref(0)
+const typingSpeedMultiplier = ref(1)
 
 // Initialize with first complaint
 if (!store.currentComplaint) {
@@ -69,6 +71,16 @@ function getNewComplaint() {
 
 function handleInput(event: Event) {
   const input = (event.target as HTMLInputElement).value
+  // Start timing when user starts typing
+  if (input.length === 1 && !typingStartTime.value) {
+    typingStartTime.value = Date.now()
+  }
+  // Calculate current typing speed and multiplier
+  if (typingStartTime.value && input.length > 0) {
+    const timeElapsed = Date.now() - typingStartTime.value
+    const speed = calculateTypingSpeed(input.length, timeElapsed)
+    typingSpeedMultiplier.value = getSpeedMultiplier(speed)
+  }
   store.typedText = input
 }
 
@@ -77,7 +89,7 @@ function handleSubmit() {
     const basePoints = new Decimal(calculatePoints(store.currentComplaint, similarity.value))
     const upgradeStore = useUpgradeStore()
     const multiplier = upgradeStore.getTotalMultiplier
-    const finalPoints = multiplier.times(basePoints).round()
+    const finalPoints = multiplier.times(basePoints).times(typingSpeedMultiplier.value).round()
     store.addScore(finalPoints)
 
     // Increment complaint counter and check achievements
@@ -91,6 +103,7 @@ function handleSubmit() {
       id: popupCounter++,
       points: finalPoints,
       multiplier,
+      speedMultiplier: typingSpeedMultiplier.value,
       x,
       y,
     })
@@ -102,6 +115,9 @@ function handleSubmit() {
 
     getNewComplaint()
     store.typedText = ''
+    // Reset typing speed tracking
+    typingStartTime.value = 0
+    typingSpeedMultiplier.value = 1
   }
 }
 
@@ -132,12 +148,13 @@ function handleContextMenu(event: MouseEvent) {
 }
 
 // Add popup management
-const popups = ref<{ id: number; points: Decimal; multiplier: Decimal; x: number; y: number }[]>([])
+const popups = ref<{ id: number; points: Decimal; multiplier: Decimal; speedMultiplier: number; x: number; y: number }[]>([])
 let popupCounter = 0
 
 const wordAssistCooldown = ref(false)
 const cooldownRemaining = ref(0)
 let cooldownInterval: ReturnType<typeof setInterval> | undefined
+const lastWordAssistTime = ref(0)
 
 function handleWordAssist() {
   if (wordAssistCooldown.value) return
@@ -158,7 +175,7 @@ function handleWordAssist() {
 
     // Check if complaint is complete
     if (store.typedText.trim() === currentComplaint.trim()) {
-      completeComplaint()
+      handleSubmit()
     }
   }
 
@@ -229,6 +246,33 @@ const currentMultiplier = computed(() => {
   const multiplier = upgradeStore.getTotalMultiplier
   return multiplier.eq(1) ? '' : `(${formatNumber(multiplier)}x multiplier)`
 })
+
+// Calculate typing speed (characters per second)
+function calculateTypingSpeed(chars: number, timeInMs: number): number {
+  return chars / (timeInMs / 1000)
+}
+
+// Calculate speed multiplier (1x to 3x based on typing speed)
+function getSpeedMultiplier(speed: number): number {
+  if (!upgradeStore.upgrades.speed_bonus.level) return 1
+
+  // Base speed thresholds (characters per second)
+  const minSpeed = 2  // 1x multiplier
+  const maxSpeed = 8  // 3x multiplier
+
+  const multiplier = 1 + (Math.min(Math.max(speed - minSpeed, 0), maxSpeed - minSpeed) / (maxSpeed - minSpeed)) * 2
+  return multiplier
+}
+
+// Get color for speed bar based on multiplier
+function getSpeedBarColor(multiplier: number): string {
+  // Calculate progress from 0 to 1
+  const progress = (multiplier - 1) / 2
+
+  if (progress < 0.3) return '#FCD34D'  // yellow-300
+  if (progress < 0.6) return '#FB923C'  // orange-400
+  return '#EF4444'                      // red-500
+}
 </script>
 
 <template>
@@ -239,7 +283,7 @@ const currentMultiplier = computed(() => {
       <div class="relative h-8">
         <div v-for="popup in popups" :key="popup.id" class="absolute left-1/2"
           :style="{ transform: `translate(-50%, ${popup.y}px)` }">
-          <PointsPopup :points="popup.points" :multiplier="popup.multiplier" />
+          <PointsPopup :points="popup.points" :multiplier="popup.multiplier" :speedMultiplier="popup.speedMultiplier" />
         </div>
       </div>
 
@@ -268,9 +312,27 @@ const currentMultiplier = computed(() => {
             </textarea>
 
             <!-- Stats Bar -->
-            <div class="flex items-center justify-between mt-2 text-xs text-gray-500 dark:text-gray-400">
-              <div class="space-x-4">
+            <div class="flex flex-col space-y-3 mt-4 text-sm text-gray-500 dark:text-gray-400">
+              <!-- Top Row: Accuracy and Speed -->
+              <div class="flex items-center space-x-6">
                 <span>Accuracy: {{ Math.round(similarity) }}%</span>
+                <!-- Speed Multiplier Bar -->
+                <div v-if="upgradeStore.upgrades.speed_bonus.level" class="inline-flex items-center gap-2">
+                  <span class="text-yellow-500 dark:text-yellow-400">
+                    Speed: {{ typingSpeedMultiplier.toFixed(1) }}x
+                  </span>
+                  <div class="w-32 h-2 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
+                    <div class="h-full transition-all duration-200" :style="{
+                      width: `${((typingSpeedMultiplier - 1) / 2) * 100}%`,
+                      backgroundColor: getSpeedBarColor(typingSpeedMultiplier)
+                    }">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Middle Row: Points -->
+              <div class="flex items-center">
                 <span>
                   Points: {{ formatNumber(potentialPoints) }}
                   <span v-if="currentMultiplier" class="text-blue-500 dark:text-blue-400">
@@ -278,18 +340,20 @@ const currentMultiplier = computed(() => {
                   </span>
                 </span>
               </div>
-              <div class="flex items-center gap-2">
-                <button v-if="showWordAssist" @click="handleWordAssist" class="px-3 py-1.5 bg-green-500 text-white rounded-full hover:bg-green-600
-                         disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-                  :disabled="wordAssistCooldown">
+
+              <!-- Bottom Row: Buttons -->
+              <div class="flex items-center justify-end gap-3">
+                <button v-if="showWordAssist" @click="handleWordAssist" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600
+                         disabled:opacity-50 disabled:cursor-not-allowed font-medium
+                         transition-colors duration-200" :disabled="wordAssistCooldown">
                   Type Word
-                  <span v-if="wordAssistCooldown" class="text-xs">
+                  <span v-if="wordAssistCooldown" class="text-xs ml-1">
                     ({{ cooldownRemaining.toFixed(1) }}s)
                   </span>
                 </button>
-                <button @click="handleSubmit" class="px-4 py-1.5 bg-blue-500 text-white rounded-full hover:bg-blue-600
-                         disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-                  :disabled="similarity < 90">
+                <button @click="handleSubmit" class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600
+                         disabled:opacity-50 disabled:cursor-not-allowed font-medium
+                         transition-colors duration-200" :disabled="similarity < 90">
                   Post Complaint
                 </button>
               </div>
