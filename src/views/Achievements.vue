@@ -68,8 +68,8 @@ const achievementStore = useAchievementStore()
               </div>
               <!-- Progress Text -->
               <div class="text-xs text-gray-500 dark:text-gray-400">
-                Progress: {{ formatNumber(achievement.progress) }} / {{ formatNumber(achievement.requirement) }}
-                ({{ Math.floor((achievement.progress / achievement.requirement) * 100) }}%)
+                Progress: {{ formatNumber(Math.min(achievement.progress, achievement.requirement)) }} / {{ formatNumber(achievement.requirement) }}
+                ({{ Math.min(Math.floor((achievement.progress / achievement.requirement) * 100), 100) }}%)
               </div>
 
               <div class="mt-2 text-sm" :class="{
