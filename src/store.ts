@@ -3,6 +3,7 @@ import Decimal from 'break_infinity.js'
 import type { GameState, GameSaveData } from '@/types'
 import { useUpgradeStore } from '@/stores/upgrade-store'
 import { upgradesList } from '@/data/upgrades'
+import { useAchievementStore } from '@/stores/achievement-store'
 
 function rehydrateUpgrade(upgrade: Upgrade): Upgrade {
   return {
@@ -27,11 +28,18 @@ export const useStore = defineStore('main', {
 
   actions: {
     initApp() {
-      this.isInitialized = true
       // Load dark mode from localStorage if exists
       const savedDarkMode = localStorage.getItem('darkMode')
-      this.darkMode = savedDarkMode ? JSON.parse(savedDarkMode) : false
-      this.updateDarkMode()
+      if (savedDarkMode !== null) {
+        this.darkMode = JSON.parse(savedDarkMode)
+        this.updateDarkMode()
+      } else {
+        // Check system preference if no saved preference
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+        this.darkMode = prefersDark
+        this.updateDarkMode()
+      }
+      this.isInitialized = true
     },
 
     toggleDarkMode() {
@@ -68,6 +76,7 @@ export const useStore = defineStore('main', {
         darkMode: this.darkMode,
         timestamp: Date.now(),
         upgrades: useUpgradeStore().getUpgradeState(),
+        achievements: useAchievementStore().getSaveState(),
       }
       localStorage.setItem('idleComplaintsSave', JSON.stringify(saveData))
     },
@@ -84,6 +93,12 @@ export const useStore = defineStore('main', {
         if (data.upgrades) {
           const upgradeStore = useUpgradeStore()
           upgradeStore.initializeFromSave(data.upgrades)
+        }
+
+        // Initialize achievements with saved state
+        if (data.achievements) {
+          const achievementStore = useAchievementStore()
+          achievementStore.initializeFromSave(data.achievements)
         }
 
         // Calculate offline progress
@@ -109,6 +124,7 @@ export const useStore = defineStore('main', {
         }
       }
       this.isInitialized = true
+      this.updateDarkMode()
     },
 
     exportSave(): string {

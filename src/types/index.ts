@@ -35,4 +35,25 @@ export interface GameSaveData {
   darkMode: boolean
   timestamp: number
   upgrades: Record<string, Upgrade>
+  achievements: {
+    achievements: Achievement[]
+    stats: {
+      totalComplaints: number
+      totalUpgrades: number
+    }
+  }
+}
+
+export interface Achievement {
+  id: string
+  name: string
+  description: string
+  requirement: number
+  bonus: {
+    type: 'multiplier' | 'auto_typing' | 'word_assist_speed'
+    amount: number
+  }
+  icon: string
+  earned: boolean
+  progress: number // Current progress towards requirement
 }

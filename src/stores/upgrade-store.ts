@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { useStore } from '@/store'
 import type { Upgrade } from '@/types'
 import Decimal from 'break_infinity.js'
+import { useAchievementStore } from '@/stores/achievement-store'
 
 export const useUpgradeStore = defineStore('upgrades', {
   state: () => ({
@@ -148,9 +149,13 @@ export const useUpgradeStore = defineStore('upgrades', {
         (upgrade: Upgrade): upgrade is Upgrade => upgrade.type === 'multiplier' && upgrade.level > 0
       )
 
-      return new Decimal(1).plus(
+      const baseMultiplier = new Decimal(1).plus(
         multiplierUpgrades.reduce((acc, upgrade) => acc.plus(upgrade.effect.times(upgrade.level)), new Decimal(0))
       )
+
+      const achievementStore = useAchievementStore()
+      const achievementBonus = new Decimal(achievementStore.getTotalMultiplierBonus)
+      return baseMultiplier.plus(achievementBonus)
     },
 
     getAutoTypingSpeed(): Decimal {
@@ -158,11 +163,14 @@ export const useUpgradeStore = defineStore('upgrades', {
         (upgrade: Upgrade) => upgrade.type === 'automation' && upgrade.level > 0
       ) as Upgrade[]
 
-      // Sum up all automation effects (chars per second)
-      return automationUpgrades.reduce(
+      const baseSpeed = automationUpgrades.reduce(
         (acc, upgrade) => acc.plus(upgrade.effect.times(upgrade.level)),
         new Decimal(0)
-      ) as Decimal
+      )
+
+      const achievementStore = useAchievementStore()
+      const achievementBonus = new Decimal(achievementStore.getTotalAutoTypingBonus)
+      return baseSpeed.plus(achievementBonus)
     },
 
     getWordAssistCooldown(): Decimal {
@@ -172,8 +180,12 @@ export const useUpgradeStore = defineStore('upgrades', {
       const speedUpgrade = this.upgrades.word_assist_speed
       const reduction = speedUpgrade.effect.times(speedUpgrade.level)
 
+      const achievementStore = useAchievementStore()
+      const achievementBonus = new Decimal(achievementStore.getTotalWordAssistSpeedBonus)
+      const totalReduction = reduction.plus(achievementBonus)
+
       // Allow reduction all the way to 0
-      return Decimal.max(new Decimal(0), baseTime.minus(reduction))
+      return Decimal.max(new Decimal(0), baseTime.minus(totalReduction))
     },
   },
 
@@ -214,6 +226,9 @@ export const useUpgradeStore = defineStore('upgrades', {
           ...upgrade,
           level: upgrade.level + 1,
         }
+        const achievementStore = useAchievementStore()
+        achievementStore.incrementStat('totalUpgrades')
+        achievementStore.checkAchievements(mainStore)
         mainStore.saveGame()
       }
     },
