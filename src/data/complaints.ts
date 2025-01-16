@@ -334,4 +334,24 @@ export const complaints: Complaint[] = [
     id: 80,
     text: "I started complaining about the dictionary being too short. Then I realized I'm the one who needs new words.",
   },
+  {
+    id: 81,
+    text: "So, there's a 'Buy Me a Coffee' link now? I’m complaining I still have to pay for my own coffee.",
+  },
+  {
+    id: 82,
+    text: 'Why buy you a coffee when I need coffee to power my complaining spree? Share the caffeine, please!',
+  },
+  {
+    id: 83,
+    text: 'I clicked ‘Buy Me a Coffee,’ but all I got was more reasons to whine about empty wallets.',
+  },
+  {
+    id: 84,
+    text: 'We have a coffee tip jar? Great, I’m now complaining that it won’t buy me a ‘complaint-proof’ keyboard instead.',
+  },
+  {
+    id: 85,
+    text: 'I’ll buy you a coffee if you promise to complain about how overpriced coffee is in the first place.',
+  },
 ]

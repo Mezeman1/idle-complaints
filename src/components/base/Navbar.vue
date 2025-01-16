@@ -105,6 +105,12 @@ onUnmounted(() => {
             </span>
           </div>
 
+          <!-- Buy Me a Coffee -->
+          <a href="https://buymeacoffee.com/idleantfarm" target="_blank" rel="noopener noreferrer"
+            class="flex items-center space-x-2 px-3 py-1 rounded-lg bg-[#FFDD00] hover:bg-[#FFDD00]/90 transition-colors">
+            <span class="text-black text-sm font-medium">☕ Buy me a coffee</span>
+          </a>
+
           <!-- Save Management -->
           <button @click="toggleSaveModal" class="p-2 rounded-lg hover:bg-theme text-theme opacity-80 save-button">
             💾

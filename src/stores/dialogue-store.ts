@@ -118,6 +118,56 @@ export const useDialogueStore = defineStore('dialogue', {
           'We should schedule a symposium on complaint theory.',
         ],
       },
+      {
+        id: 21,
+        complaintId: 81, // "So, there's a 'Buy Me a Coffee' link now? I'm complaining I still have to pay for my own coffee."
+        npcName: 'Barista Bot',
+        lines: [
+          'Would you like to file a complaint about our complaint-powered coffee machine?',
+          'Each whine gets you closer to a free virtual coffee!',
+          'Terms and conditions apply. Void where prohibited by positive attitudes.',
+        ],
+      },
+      {
+        id: 22,
+        complaintId: 82, // "Why buy you a coffee when I need coffee to power my complaining spree? Share the caffeine, please!"
+        npcName: 'Caffeine Carl',
+        lines: [
+          'Our studies show complaining is 73% more effective with coffee!',
+          'Have you tried our new "Perpetual Complaint" coffee blend?',
+          'Side effects may include excessive typing and spontaneous ranting.',
+        ],
+      },
+      {
+        id: 23,
+        complaintId: 83, // "I clicked 'Buy Me a Coffee,' but all I got was more reasons to whine about empty wallets."
+        npcName: 'Finance Fred',
+        lines: [
+          'Have you considered our coffee-complaint exchange program?',
+          'Current rate: 1 coffee = 1000 premium complaints!',
+          'Warning: Premium complaints may contain traces of gratitude.',
+        ],
+      },
+      {
+        id: 24,
+        complaintId: 84, // "We have a coffee tip jar? Great, I'm now complaining that it won't buy me a 'complaint-proof' keyboard instead."
+        npcName: 'Tech Support Tim',
+        lines: [
+          'Our complaint-proof keyboards are coffee-resistant!',
+          'But they tend to complain about the coffee quality...',
+          'Maybe stick to water-cooled keyboards?',
+        ],
+      },
+      {
+        id: 25,
+        complaintId: 85, // "I'll buy you a coffee if you promise to complain about how overpriced coffee is in the first place."
+        npcName: 'Economy Emma',
+        lines: [
+          'Ah yes, our premium complaint-infused coffee!',
+          'Each bean is carefully selected by professional complainers.',
+          "The price? That's another topic for our complaint department.",
+        ],
+      },
     ],
   }),
 
