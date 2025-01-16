@@ -1,44 +1,50 @@
-import { acceptHMRUpdate, defineStore } from 'pinia'
+import { defineStore } from 'pinia'
+import Decimal from 'break_infinity.js'
+import type { GameState } from '@/types'
 
 export const useStore = defineStore('main', {
-  state: () => ({
-    debug: import.meta.env.MODE === 'development',
-    appMeta: {
-      version:
-        import.meta.env.MODE === 'development'
-          ? import.meta.env.VITE_APP_VERSION + '-dev'
-          : import.meta.env.VITE_APP_VERSION,
-      builtAt: import.meta.env.VITE_APP_BUILD_EPOCH
-        ? new Date(Number(import.meta.env.VITE_APP_BUILD_EPOCH))
-        : undefined,
-    },
+  state: (): GameState => ({
     isInitialized: false,
-    count: 0,
+    darkMode: false,
+    score: new Decimal(0),
+    currentComplaint: '',
+    typedText: '',
   }),
 
   actions: {
     initApp() {
       this.isInitialized = true
-      console.log('app initialized!')
+      // Load dark mode from localStorage if exists
+      const savedDarkMode = localStorage.getItem('darkMode')
+      this.darkMode = savedDarkMode ? JSON.parse(savedDarkMode) : false
+      this.updateDarkMode()
     },
 
-    increment(value = 1) {
-      this.count += value
+    toggleDarkMode() {
+      this.darkMode = !this.darkMode
+      localStorage.setItem('darkMode', JSON.stringify(this.darkMode))
+      this.updateDarkMode()
     },
 
-    goToDemo(event: Event) {
-      event.preventDefault()
-      this.router.push('/demo/')
+    updateDarkMode() {
+      if (this.darkMode) {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
+    },
+
+    setCurrentComplaint(complaint: string) {
+      this.currentComplaint = complaint
+      this.typedText = ''
+    },
+
+    addScore(points: number) {
+      this.score = this.score.plus(points)
     },
   },
 
   getters: {
-    isReady: state => {
-      return state.isInitialized
-    },
+    isReady: state => state.isInitialized,
   },
 })
-
-if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(useStore, import.meta.hot))
-}

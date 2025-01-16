@@ -1,0 +1,221 @@
+# Vue 3 + TypeScript Project Standards
+
+## Project Structure
+
+```typescript
+src/
+├── stores/         # Pinia stores (split by feature)
+│   ├── resource-store.ts
+│   ├── upgrade-store.ts
+│   └── game-store.ts
+├── components/     # Reusable Vue components
+│   ├── base/
+│   └── features/
+├── views/          # Page-level components
+├── assets/         # Static assets
+├── types/          # TypeScript definitions
+└── utils/          # Helper functions
+```
+
+## Component Standards
+
+### Script Setup Format
+
+```vue
+<script setup lang="ts">
+// 1. Vue imports
+import { ref, computed } from 'vue'
+
+// 2. External libraries
+import Decimal from 'break_infinity.js'
+
+// 3. Store imports
+import { useResourceStore } from '@/stores/resource-store'
+import { storeToRefs } from 'pinia'
+
+// 4. Component imports
+import BaseButton from '@/components/base/BaseButton.vue'
+
+// 5. Type imports
+import type { IResourceData } from '@/types'
+
+// 6. Utils & Assets
+import { formatNumber } from '@/utils/formatters'
+
+// Component logic here...
+</script>
+
+<template>
+  <div class="flex flex-col space-y-4">
+    <!-- Use semantic HTML and Tailwind exclusively -->
+  </div>
+</template>
+```
+
+## Store Implementation
+
+### Basic Store Structure
+
+```typescript
+import { defineStore } from 'pinia'
+import { Decimal } from 'break_infinity.js'
+import type { IResourceState } from '@/types'
+
+export const useResourceStore = defineStore('resources', {
+  state: (): IResourceState => ({
+    gold: new Decimal(0),
+    gems: new Decimal(0),
+  }),
+
+  getters: {
+    formattedGold(): string {
+      return this.gold.toExponential(2)
+    },
+  },
+
+  actions: {
+    addGold(amount: Decimal): void {
+      this.gold = this.gold.plus(amount)
+    },
+  },
+})
+```
+
+## Type Definitions
+
+### Interface Examples
+
+```typescript
+interface IResourceState {
+  gold: Decimal
+  gems: Decimal
+}
+
+interface IUpgrade {
+  id: string
+  cost: Decimal
+  multiplier: Decimal
+  level: number
+}
+```
+
+## Error Handling
+
+### Store Actions
+
+```typescript
+async function fetchUserData(): Promise<void> {
+  try {
+    const data = await api.getData()
+    this.userData = data
+  } catch (error) {
+    console.error('Failed to fetch user data:', error)
+    throw new Error('Unable to load user data')
+  }
+}
+```
+
+## Styling Guidelines
+
+### Tailwind Usage
+
+```vue
+<template>
+  <!-- ✅ Correct usage -->
+  <div class="flex flex-col p-4 dark:bg-gray-800">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+      Resources
+    </h1>
+  </div>
+
+  <!-- ❌ Avoid -->
+  <div style="display: flex">  <!-- No inline styles -->
+</template>
+```
+
+## Testing Examples
+
+### Store Tests
+
+```typescript
+import { describe, it, expect } from 'vitest'
+import { useResourceStore } from '@/stores/resource-store'
+import { Decimal } from 'break_infinity.js'
+
+describe('Resource Store', () => {
+  it('should add resources correctly', () => {
+    const store = useResourceStore()
+    store.addGold(new Decimal(10))
+    expect(store.gold.equals(new Decimal(10))).toBe(true)
+  })
+})
+```
+
+## Naming Conventions
+
+### Examples
+
+```typescript
+// Components (PascalCase)
+ResourceDisplay.vue
+BaseButton.vue
+
+// Files (kebab-case)
+resource-store.ts
+format-utils.ts
+
+// Stores (use[StoreName])
+useResourceStore
+useGameStore
+
+// Interfaces (IPascalCase)
+interface IResourceData
+interface IUpgradeConfig
+
+// Types (TPascalCase)
+type TResourceKey = 'gold' | 'gems'
+
+// Constants (UPPER_SNAKE_CASE)
+const MAX_LEVEL = 100
+```
+
+## Git Commit Standards
+
+### Examples
+
+```bash
+# Feature
+git commit -m "feat: add resource production system"
+
+# Bug fix
+git commit -m "fix: correct calculation overflow"
+
+# Refactor
+git commit -m "refactor: optimize store performance"
+
+# Documentation
+git commit -m "docs: update README with new features"
+```
+
+## Branch Naming
+
+```bash
+feature/resource-system
+bugfix/calculation-overflow
+hotfix/critical-game-loop
+```
+
+Remember:
+
+- Keep components focused and single-responsibility
+- Use TypeScript strict mode
+- Prefer early returns
+- Document complex logic
+- Write tests for critical features
+- Follow mobile-first approach
+- Use semantic HTML
+- Keep commits atomic and meaningful
+
+```
+
+```
