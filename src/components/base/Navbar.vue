@@ -90,7 +90,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <nav class="bg-white dark:bg-gray-800 shadow-lg relative">
+    <nav class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-between h-16">
                 <div class="flex space-x-4">
@@ -123,7 +123,7 @@ onUnmounted(() => {
 
         <!-- Save Modal -->
         <div v-if="showSaveModal"
-            class="absolute right-4 top-full mt-2 w-96 bg-white dark:bg-gray-700 rounded-lg shadow-lg p-4 z-50 save-modal">
+            class="absolute right-4 top-[calc(100%+0.5rem)] w-96 bg-white dark:bg-gray-700 rounded-lg shadow-lg p-4 z-50 save-modal">
             <div class="space-y-4">
                 <!-- Import -->
                 <div>
