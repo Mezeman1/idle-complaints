@@ -154,4 +154,44 @@ export const complaints: Complaint[] = [
     id: 35,
     text: "Idle Ant Farm taught me resource management. Here, I'm just managing my patience!",
   },
+  {
+    id: 36,
+    text: "I posted my complaint on Reddit and got zero upvotes. Now I'm complaining about that too.",
+  },
+  {
+    id: 37,
+    text: "The mods removed my post for 'excessive whining.' The irony is rich.",
+  },
+  {
+    id: 38,
+    text: "Why does every subreddit demand a TL;DR? I'm too busy complaining to summarize!",
+  },
+  {
+    id: 39,
+    text: "I tried crossposting this rant, but Reddit flagged it as spam. Guess I'm spamming complaints now.",
+  },
+  {
+    id: 40,
+    text: "I need more karma to complain properly. My current karma just isn't salty enough.",
+  },
+  {
+    id: 41,
+    text: "I got a permanent ban from r/Complaints for 'complaining too much.' I'm speechless.",
+  },
+  {
+    id: 42,
+    text: "My meltdown is pinned to the top of the sub, so now I'm stuck living in a glass house of my own complaints.",
+  },
+  {
+    id: 43,
+    text: 'Why is Reddit’s dark mode not dark enough? I want to brood in pitch-black gloom while I whine.',
+  },
+  {
+    id: 44,
+    text: "Reddit recommended me a positivity sub. I'm offended by the lack of negativity in that algorithm.",
+  },
+  {
+    id: 45,
+    text: 'I posted about complaining and got 200 comments complaining about my complaints. Reddit is a wild place.',
+  },
 ]
