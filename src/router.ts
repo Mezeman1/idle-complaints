@@ -10,13 +10,6 @@ const routes = [
       title: 'Complaint Department',
     },
   },
-  {
-    path: '/:pathMatch(.*)*',
-    component: IndexPage,
-    meta: {
-      title: 'Complaint Department',
-    },
-  },
 ]
 
 const router = createRouter({
