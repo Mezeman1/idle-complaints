@@ -283,7 +283,7 @@ function getSpeedBarColor(multiplier: number): string {
       <div class="relative h-8">
         <div v-for="popup in popups" :key="popup.id" class="absolute left-1/2"
           :style="{ transform: `translate(-50%, ${popup.y}px)` }">
-          <PointsPopup :points="popup.points" :multiplier="popup.multiplier" />
+          <PointsPopup :points="popup.points" :multiplier="popup.multiplier" :speedMultiplier="popup.speedMultiplier" />
         </div>
       </div>
 

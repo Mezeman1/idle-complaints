@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Decimal } from 'break_infinity.js'
+import Decimal from 'break_infinity.js'
 import { formatNumber } from '@/utils/formatters'
 
 defineProps<{
