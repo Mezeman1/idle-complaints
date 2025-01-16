@@ -1,20 +1,27 @@
 import { createRouter, createWebHistory } from 'vue-router'
-
 import IndexPage from '@/pages/IndexPage.vue'
+import Achievements from '@/views/Achievements.vue'
 
-const routes = [
-  {
-    path: '/idle-complaints',
-    component: IndexPage,
-    meta: {
-      title: 'Complaint Department',
+export const router = createRouter({
+  history: createWebHistory('/idle-complaints/'),
+  routes: [
+    {
+      path: '/',
+      name: 'game',
+      component: IndexPage,
+      meta: {
+        title: 'Complaint Department',
+      },
     },
-  },
-]
-
-const router = createRouter({
-  history: createWebHistory(),
-  routes,
+    {
+      path: '/achievements',
+      name: 'achievements',
+      component: Achievements,
+      meta: {
+        title: 'Achievements - Complaint Department',
+      },
+    },
+  ],
 })
 
 export default router

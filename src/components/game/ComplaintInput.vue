@@ -7,9 +7,11 @@ import { useUpgradeStore } from '@/stores/upgrade-store'
 import { formatNumber } from '@/utils/formatters'
 import PointsPopup from './PointsPopup.vue'
 import Toast from '@/components/base/Toast.vue'
+import { useAchievementStore } from '@/stores/achievement-store'
 
 const store = useStore()
 const upgradeStore = useUpgradeStore()
+const achievementStore = useAchievementStore()
 
 // Initialize with first complaint
 if (!store.currentComplaint) {
@@ -77,6 +79,10 @@ function handleSubmit() {
     const multiplier = upgradeStore.getTotalMultiplier
     const finalPoints = multiplier.times(basePoints).round()
     store.addScore(finalPoints)
+
+    // Increment complaint counter and check achievements
+    achievementStore.incrementStat('totalComplaints')
+    achievementStore.checkAchievements(store)
 
     // Add popup
     const x = Math.random() * 40 - 20
