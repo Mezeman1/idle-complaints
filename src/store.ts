@@ -1,14 +1,28 @@
 import { defineStore } from 'pinia'
 import Decimal from 'break_infinity.js'
-import type { GameState } from '@/types'
+import type { GameState, GameSaveData } from '@/types'
+import { useUpgradeStore } from '@/stores/upgrade-store'
+import { upgradesList } from '@/data/upgrades'
+
+function rehydrateUpgrade(upgrade: Upgrade): Upgrade {
+  return {
+    ...upgrade,
+    baseCost: new Decimal(upgrade.baseCost),
+    effect: new Decimal(upgrade.effect),
+    unlockCost: new Decimal(upgrade.unlockCost),
+  }
+}
 
 export const useStore = defineStore('main', {
   state: (): GameState => ({
     isInitialized: false,
     darkMode: false,
     score: new Decimal(0),
+    highestScore: new Decimal(0),
     currentComplaint: '',
     typedText: '',
+    upgrades: Object.fromEntries(upgradesList.map(upgrade => [upgrade.id, { ...upgrade }])),
+    lastAutoScoreTime: Date.now(),
   }),
 
   actions: {
@@ -39,8 +53,95 @@ export const useStore = defineStore('main', {
       this.typedText = ''
     },
 
-    addScore(points: number) {
-      this.score = this.score.plus(points)
+    addScore(points: number | Decimal) {
+      const pointsDecimal = points instanceof Decimal ? points : new Decimal(points)
+      this.score = this.score.plus(pointsDecimal)
+      if (this.score.gt(this.highestScore)) {
+        this.highestScore = this.score
+      }
+    },
+
+    saveGame() {
+      const upgradeStore = useUpgradeStore()
+      const saveData: GameSaveData = {
+        score: this.score.toString(),
+        highestScore: this.highestScore.toString(),
+        darkMode: this.darkMode,
+        timestamp: Date.now(),
+        upgrades: upgradeStore.getUpgradeState(),
+      }
+      localStorage.setItem('idleComplaintsSave', JSON.stringify(saveData))
+    },
+
+    loadGame() {
+      const saveData = localStorage.getItem('idleComplaintsSave')
+      if (saveData) {
+        const data: GameSaveData = JSON.parse(saveData)
+        this.score = new Decimal(data.score)
+        this.highestScore = new Decimal(data.highestScore || data.score)
+        this.darkMode = data.darkMode
+        this.updateDarkMode()
+        if (data.upgrades) {
+          const upgradeStore = useUpgradeStore()
+          upgradeStore.initializeFromSave(data.upgrades)
+        }
+      }
+    },
+
+    exportSave(): string {
+      const saveData: GameSaveData = {
+        score: this.score.toString(),
+        highestScore: this.highestScore.toString(),
+        darkMode: this.darkMode,
+        timestamp: Date.now(),
+        upgrades: this.upgrades,
+      }
+      return btoa(JSON.stringify(saveData))
+    },
+
+    importSave(saveString: string) {
+      try {
+        const saveData: GameSaveData = JSON.parse(atob(saveString))
+        this.score = new Decimal(saveData.score)
+        this.highestScore = new Decimal(saveData.highestScore || saveData.score)
+        this.darkMode = saveData.darkMode
+        this.updateDarkMode()
+        if (saveData.upgrades) {
+          const upgradeStore = useUpgradeStore()
+          upgradeStore.initializeFromSave(saveData.upgrades)
+        }
+        this.saveGame()
+      } catch (error) {
+        console.error('Failed to import save:', error)
+        throw new Error('Invalid save data')
+      }
+    },
+
+    resetGame() {
+      // Clear all saved data
+      localStorage.removeItem('idleComplaintsSave')
+      localStorage.removeItem('darkMode')
+
+      // Reload the page to reset all stores to initial state
+      window.location.reload()
+    },
+
+    processAutoScore() {
+      const now = Date.now()
+      const upgradeStore = useUpgradeStore()
+      const typingSpeed = upgradeStore.getAutoTypingSpeed
+      const avgComplaintLength = 50
+      const basePoints = new Decimal(avgComplaintLength)
+      const multiplier = upgradeStore.getTotalMultiplier
+      const scorePerSecond = basePoints.times(multiplier).times(typingSpeed.div(avgComplaintLength))
+
+      if (scorePerSecond.gt(0)) {
+        const deltaTime = (now - this.lastAutoScoreTime) / 1000 // Convert to seconds
+        const scoreToAdd = scorePerSecond.times(deltaTime)
+        this.addScore(scoreToAdd)
+      }
+
+      this.lastAutoScoreTime = now
     },
   },
 

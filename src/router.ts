@@ -4,10 +4,17 @@ import IndexPage from '@/pages/IndexPage.vue'
 
 const routes = [
   {
-    path: '/',
+    path: '/idle-complaint',
     component: IndexPage,
     meta: {
-      title: 'Vite + Vue + TypeScript + Tailwind Starter Template',
+      title: 'Complaint Department',
+    },
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    component: IndexPage,
+    meta: {
+      title: 'Complaint Department',
     },
   },
 ]

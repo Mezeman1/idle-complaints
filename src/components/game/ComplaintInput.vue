@@ -1,112 +1,313 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useStore } from '@/store'
 import { complaints } from '@/data/complaints'
 import Decimal from 'break_infinity.js'
+import { useUpgradeStore } from '@/stores/upgrade-store'
+import { formatNumber } from '@/utils/formatters'
+import PointsPopup from './PointsPopup.vue'
+import Toast from '@/components/base/Toast.vue'
 
 const store = useStore()
-const similarity = computed(() => {
-    if (!store.currentComplaint || !store.typedText) return 0
-    return calculateSimilarity(store.currentComplaint.toLowerCase(), store.typedText.toLowerCase())
-})
-
-function calculateSimilarity(str1: string, str2: string): number {
-    const len1 = str1.length
-    const len2 = str2.length
-    const matrix: number[][] = Array(len1 + 1).fill(null).map(() => Array(len2 + 1).fill(0))
-
-    for (let i = 0; i <= len1; i++) matrix[i][0] = i
-    for (let j = 0; j <= len2; j++) matrix[0][j] = j
-
-    for (let i = 1; i <= len1; i++) {
-        for (let j = 1; j <= len2; j++) {
-            const cost = str1[i - 1] === str2[j - 1] ? 0 : 1
-            matrix[i][j] = Math.min(
-                matrix[i - 1][j] + 1,
-                matrix[i][j - 1] + 1,
-                matrix[i - 1][j - 1] + cost
-            )
-        }
-    }
-
-    const maxLength = Math.max(len1, len2)
-    return ((maxLength - matrix[len1][len2]) / maxLength) * 100
-}
-
-function calculatePoints(text: string, accuracyPercent: number): number {
-    // Base points: 1 point per character
-    const basePoints = text.length
-
-    // Bonus multiplier based on accuracy (90-100%)
-    // At 90% accuracy: 1x multiplier
-    // At 95% accuracy: 1.5x multiplier
-    // At 100% accuracy: 2x multiplier
-    const accuracyBonus = 1 + Math.max(0, (accuracyPercent - 90) / 10)
-
-    // Length bonus: Additional 10% per 10 characters after the first 20
-    const lengthBonus = Math.max(0, (text.length - 20) / 10) * 0.1
-
-    return Math.round(basePoints * (1 + lengthBonus) * accuracyBonus)
-}
-
-function getNewComplaint() {
-    const randomComplaint = complaints[Math.floor(Math.random() * complaints.length)]
-    store.setCurrentComplaint(randomComplaint.text)
-}
-
-function handleInput(event: Event) {
-    const input = (event.target as HTMLInputElement).value
-    store.typedText = input
-}
-
-function handleSubmit() {
-    if (similarity.value >= 90) {
-        const points = calculatePoints(store.currentComplaint, similarity.value)
-        store.addScore(points)
-        getNewComplaint()
-        store.typedText = ''
-    }
-}
-
-function handleKeydown(event: KeyboardEvent) {
-    if (event.key === 'Enter') {
-        handleSubmit()
-    }
-}
+const upgradeStore = useUpgradeStore()
 
 // Initialize with first complaint
 if (!store.currentComplaint) {
-    getNewComplaint()
+  getNewComplaint()
 }
+
+const similarity = computed(() => {
+  if (!store.currentComplaint || !store.typedText) return 0
+  return calculateSimilarity(store.currentComplaint.toLowerCase(), store.typedText.toLowerCase())
+})
+
+function calculateSimilarity(str1: string, str2: string): number {
+  const len1 = str1.length
+  const len2 = str2.length
+  const matrix: number[][] = Array(len1 + 1).fill(null).map(() => Array(len2 + 1).fill(0))
+
+  for (let i = 0; i <= len1; i++) matrix[i][0] = i
+  for (let j = 0; j <= len2; j++) matrix[0][j] = j
+
+  for (let i = 1; i <= len1; i++) {
+    for (let j = 1; j <= len2; j++) {
+      const cost = str1[i - 1] === str2[j - 1] ? 0 : 1
+      matrix[i][j] = Math.min(
+        matrix[i - 1][j] + 1,
+        matrix[i][j - 1] + 1,
+        matrix[i - 1][j - 1] + cost
+      )
+    }
+  }
+
+  const maxLength = Math.max(len1, len2)
+  return ((maxLength - matrix[len1][len2]) / maxLength) * 100
+}
+
+function calculatePoints(text: string, accuracyPercent: number): number {
+  // Base points: 1 point per character
+  const basePoints = text.length
+
+  // Bonus multiplier based on accuracy (90-100%)
+  // At 90% accuracy: 1x multiplier
+  // At 95% accuracy: 1.5x multiplier
+  // At 100% accuracy: 2x multiplier
+  const accuracyBonus = 1 + Math.max(0, (accuracyPercent - 90) / 10)
+
+  // Length bonus: Additional 10% per 10 characters after the first 20
+  const lengthBonus = Math.max(0, (text.length - 20) / 10) * 0.1
+
+  return Math.round(basePoints * (1 + lengthBonus) * accuracyBonus)
+}
+
+function getNewComplaint() {
+  const randomComplaint = complaints[Math.floor(Math.random() * complaints.length)]
+  store.setCurrentComplaint(randomComplaint.text)
+}
+
+function handleInput(event: Event) {
+  const input = (event.target as HTMLInputElement).value
+  store.typedText = input
+}
+
+function handleSubmit() {
+  if (similarity.value >= 90) {
+    const basePoints = new Decimal(calculatePoints(store.currentComplaint, similarity.value))
+    const upgradeStore = useUpgradeStore()
+    const multiplier = upgradeStore.getTotalMultiplier
+    const finalPoints = multiplier.times(basePoints).round()
+    store.addScore(finalPoints)
+
+    // Add popup
+    const x = Math.random() * 40 - 20
+    const y = Math.random() * 20 - 40
+    popups.value.push({
+      id: popupCounter++,
+      points: finalPoints,
+      multiplier,
+      x,
+      y,
+    })
+
+    // Remove popup after animation
+    setTimeout(() => {
+      popups.value = popups.value.filter(p => p.id !== popupCounter - 1)
+    }, 1100)
+
+    getNewComplaint()
+    store.typedText = ''
+  }
+}
+
+function handleKeydown(event: KeyboardEvent) {
+  if (event.key === 'Enter') {
+    handleSubmit()
+  }
+}
+
+function handlePaste(event: ClipboardEvent) {
+  event.preventDefault()
+  showCheatToast()
+}
+
+function handleCopy(event: ClipboardEvent) {
+  event.preventDefault()
+  showCheatToast()
+}
+
+function handleCut(event: ClipboardEvent) {
+  event.preventDefault()
+  showCheatToast()
+}
+
+function handleContextMenu(event: MouseEvent) {
+  event.preventDefault()
+  showCheatToast()
+}
+
+// Add popup management
+const popups = ref<{ id: number; points: Decimal; multiplier: Decimal; x: number; y: number }[]>([])
+let popupCounter = 0
+
+const wordAssistCooldown = ref(false)
+const cooldownRemaining = ref(0)
+let cooldownInterval: ReturnType<typeof setInterval> | undefined
+
+function handleWordAssist() {
+  if (wordAssistCooldown.value) return
+
+  const words = store.currentComplaint.split(' ')
+  const typedWords = store.typedText.split(' ')
+  const nextWordIndex = typedWords.length - 1
+
+  if (nextWordIndex < words.length) {
+    const newText = words.slice(0, nextWordIndex + 1).join(' ')
+    store.typedText = newText + ' '
+  }
+
+  // Start cooldown
+  const cooldownTime = Number(upgradeStore.getWordAssistCooldown)
+  wordAssistCooldown.value = true
+  cooldownRemaining.value = cooldownTime
+
+  // Update countdown every 100ms
+  cooldownInterval = setInterval(() => {
+    cooldownRemaining.value = Math.max(0, cooldownRemaining.value - 0.1)
+    if (cooldownRemaining.value <= 0) {
+      wordAssistCooldown.value = false
+      clearInterval(cooldownInterval)
+    }
+  }, 100)
+
+  setTimeout(() => {
+    wordAssistCooldown.value = false
+    clearInterval(cooldownInterval)
+  }, cooldownTime * 1000)
+}
+
+// Clean up interval on unmount
+onUnmounted(() => {
+  if (cooldownInterval) clearInterval(cooldownInterval)
+})
+
+const showWordAssist = computed(() => upgradeStore.upgrades.word_assist.level > 0)
+
+// Add toast management
+const showToast = ref(false)
+const toastMessage = ref('')
+let toastTimeout: ReturnType<typeof setTimeout> | undefined
+
+const cheatMessages = [
+  "Nice try! But we don't do that here... 😏",
+  "Copy-paste? In MY complaint department? 🤨",
+  "The only shortcuts here are the ones to frustration! 😤",
+  "Typing builds character! And carpal tunnel... 😅",
+  "That's not very complaint-like of you! 😠",
+  "Manual labor is the best labor! 💪",
+  "Shortcuts lead to the dark side! 🦹‍♂️",
+]
+
+function showCheatToast() {
+  if (toastTimeout) {
+    clearTimeout(toastTimeout)
+  }
+
+  toastMessage.value = cheatMessages[Math.floor(Math.random() * cheatMessages.length)]
+  showToast.value = true
+
+  toastTimeout = setTimeout(() => {
+    showToast.value = false
+  }, 3000)
+}
+
+// Add computed for total points with multiplier
+const potentialPoints = computed(() => {
+  const basePoints = calculatePoints(store.currentComplaint, similarity.value)
+  const multiplier = upgradeStore.getTotalMultiplier
+  return multiplier.times(basePoints).round()
+})
+
+// Add computed for formatted multiplier
+const currentMultiplier = computed(() => {
+  const multiplier = upgradeStore.getTotalMultiplier
+  return multiplier.eq(1) ? '' : `(${formatNumber(multiplier)}x multiplier)`
+})
 </script>
 
 <template>
-    <div class="max-w-2xl mx-auto mt-8 p-6 bg-white dark:bg-gray-700 rounded-lg shadow-lg">
-        <div class="mb-6">
-            <h2 class="text-xl font-semibold mb-2 text-gray-800 dark:text-white">Current Complaint:</h2>
-            <p class="text-lg text-gray-600 dark:text-gray-300">{{ store.currentComplaint }}</p>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                Potential points: {{ calculatePoints(store.currentComplaint, 100) }} (at 100% accuracy)
-            </p>
+  <div class="max-w-xl mx-auto mt-8">
+    <!-- Complaint Input Card -->
+    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-lg mb-4">
+      <!-- Points popup container -->
+      <div class="relative h-8">
+        <div v-for="popup in popups" :key="popup.id" class="absolute left-1/2"
+          :style="{ transform: `translate(-50%, ${popup.y}px)` }">
+          <PointsPopup :points="popup.points" :multiplier="popup.multiplier" />
         </div>
+      </div>
 
-        <div class="mb-4">
-            <label class="block text-gray-700 dark:text-gray-300 mb-2">Type the complaint:</label>
-            <input type="text" :value="store.typedText" @input="handleInput" @keydown="handleKeydown"
-                class="w-full p-2 border rounded-lg dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-                placeholder="Start typing...">
-        </div>
-
-        <div class="flex justify-between items-center">
-            <div class="text-sm text-gray-500 dark:text-gray-400">
-                <div>Accuracy: {{ Math.round(similarity) }}%</div>
-                <div>Points for current accuracy: {{ calculatePoints(store.currentComplaint, similarity) }}</div>
+      <!-- Input Area -->
+      <div class="p-4">
+        <div class="flex items-start space-x-3">
+          <div class="flex-shrink-0">
+            <div class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
+              <span class="text-lg">😤</span>
             </div>
-            <button @click="handleSubmit"
-                class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                :disabled="similarity < 90">
-                Submit
-            </button>
+          </div>
+          <div class="flex-grow">
+            <!-- Target Complaint -->
+            <div class="mb-3 text-gray-800 dark:text-gray-200 text-sm">
+              <div class="font-medium mb-1">Complaint to type:</div>
+              <div class="p-2 bg-gray-50 dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-600">
+                {{ store.currentComplaint }}
+              </div>
+            </div>
+
+            <!-- Input Textarea -->
+            <textarea :value="store.typedText" @input="handleInput" @keydown="handleKeydown" @paste="handlePaste"
+              @copy="handleCopy" @cut="handleCut" @contextmenu="handleContextMenu" rows="3" class="w-full p-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg
+                     text-gray-800 dark:text-gray-200 resize-none focus:ring-2 focus:ring-blue-500
+                     focus:border-transparent" placeholder="Type the complaint here...">
+            </textarea>
+
+            <!-- Stats Bar -->
+            <div class="flex items-center justify-between mt-2 text-xs text-gray-500 dark:text-gray-400">
+              <div class="space-x-4">
+                <span>Accuracy: {{ Math.round(similarity) }}%</span>
+                <span>
+                  Points: {{ formatNumber(potentialPoints) }}
+                  <span v-if="currentMultiplier" class="text-blue-500 dark:text-blue-400">
+                    {{ currentMultiplier }}
+                  </span>
+                </span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button v-if="showWordAssist" @click="handleWordAssist" class="px-3 py-1.5 bg-green-500 text-white rounded-full hover:bg-green-600
+                         disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                  :disabled="wordAssistCooldown">
+                  Type Word
+                  <span v-if="wordAssistCooldown" class="text-xs">
+                    ({{ cooldownRemaining.toFixed(1) }}s)
+                  </span>
+                </button>
+                <button @click="handleSubmit" class="px-4 py-1.5 bg-blue-500 text-white rounded-full hover:bg-blue-600
+                         disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                  :disabled="similarity < 90">
+                  Post Complaint
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+
+    <!-- Previous Complaint Preview -->
+    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-4 mb-4">
+      <div class="text-sm text-gray-500 dark:text-gray-400">
+        Previous complaint worth:
+        <span class="font-medium text-gray-700 dark:text-gray-300">
+          {{ formatNumber(calculatePoints(store.currentComplaint, 100) * upgradeStore.getTotalMultiplier) }} points
+        </span>
+        at 100% accuracy
+        <span v-if="currentMultiplier" class="text-blue-500 dark:text-blue-400 ml-1">
+          {{ currentMultiplier }}
+        </span>
+      </div>
+    </div>
+
+    <Transition enter-active-class="transition duration-300 ease-out"
+      enter-from-class="transform translate-y-4 opacity-0" enter-to-class="transform translate-y-0 opacity-100"
+      leave-active-class="transition duration-200 ease-in" leave-from-class="transform translate-y-0 opacity-100"
+      leave-to-class="transform translate-y-4 opacity-0">
+      <Toast v-if="showToast" :message="toastMessage" />
+    </Transition>
+  </div>
 </template>
+
+<style scoped>
+textarea::placeholder {
+  opacity: 0.5;
+  color: inherit;
+}
+</style>
