@@ -85,6 +85,28 @@ export const useStore = defineStore('main', {
           const upgradeStore = useUpgradeStore()
           upgradeStore.initializeFromSave(data.upgrades)
         }
+
+        // Calculate offline progress
+        if (data.timestamp) {
+          const now = Date.now()
+          const offlineTime = (now - data.timestamp) / 1000 // Convert to seconds
+
+          // Only calculate if more than 10 seconds have passed
+          if (offlineTime > 10) {
+            const upgradeStore = useUpgradeStore()
+            const typingSpeed = upgradeStore.getAutoTypingSpeed
+            const avgComplaintLength = 50
+            const basePoints = new Decimal(avgComplaintLength)
+            const multiplier = upgradeStore.getTotalMultiplier
+            const scorePerSecond = basePoints.times(multiplier).times(typingSpeed.div(avgComplaintLength))
+
+            // Add offline progress
+            if (scorePerSecond.gt(0)) {
+              const offlineScore = scorePerSecond.times(offlineTime)
+              this.addScore(offlineScore)
+            }
+          }
+        }
       }
       this.isInitialized = true
     },
