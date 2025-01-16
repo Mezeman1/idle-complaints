@@ -17,6 +17,7 @@ useHead({
 })
 
 import { useAchievementStore } from '@/stores/achievement-store'
+import { useStore } from '@/store'
 import AchievementNotification from '@/components/base/AchievementNotification.vue'
 
 const achievementStore = useAchievementStore()
@@ -39,7 +40,15 @@ store.loadGame()
   </div>
 </template>
 
-<style>
+<style >
+button {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+
 .notification-enter-active,
 .notification-leave-active {
   transition: all 0.5s ease;
