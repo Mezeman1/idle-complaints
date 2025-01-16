@@ -184,7 +184,7 @@ export const complaints: Complaint[] = [
   },
   {
     id: 43,
-    text: 'Why is Reddit's dark mode not dark enough? I want to brood in pitch-black gloom while I whine.',
+    text: "Why is Reddit's dark mode not dark enough? I want to brood in pitch-black gloom while I whine.",
   },
   {
     id: 44,
