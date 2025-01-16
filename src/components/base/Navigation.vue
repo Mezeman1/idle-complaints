@@ -23,6 +23,13 @@
           }">
           Collection
         </button>
+        <button @click="emit('update:currentTab', 'themes')"
+          class="flex items-center px-3 py-2 rounded-md text-sm font-medium" :class="{
+            'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white': currentTab === 'themes',
+            'text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700': currentTab !== 'themes'
+          }">
+          Themes
+        </button>
       </template>
     </Navbar>
   </div>

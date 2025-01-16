@@ -1,3 +1,60 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --color-primary: #3b82f6;
+  --color-secondary: #1f2937;
+  --color-accent: #10b981;
+  --color-background: #f3f4f6;
+  --color-text: #111827;
+  --color-card: #ffffff;
+  --color-border: #e5e7eb;
+}
+
+/* Update all color references to use CSS variables */
+.bg-primary {
+  background-color: var(--color-primary);
+}
+
+.text-primary {
+  color: var(--color-primary);
+}
+
+/* Add these classes to your existing Tailwind classes */
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 rounded-lg transition-colors duration-200;
+    background-color: var(--color-primary);
+    color: white;
+    &:hover {
+      filter: brightness(110%);
+    }
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 rounded-lg transition-colors duration-200;
+    background-color: var(--color-secondary);
+    color: white;
+    &:hover {
+      filter: brightness(110%);
+    }
+  }
+
+  .bg-theme {
+    background-color: var(--color-background);
+  }
+
+  .text-theme {
+    color: var(--color-text);
+  }
+
+  .accent-theme {
+    color: var(--color-accent);
+  }
+
+  .card-theme {
+    background-color: var(--color-card);
+    border-color: var(--color-border);
+  }
+}

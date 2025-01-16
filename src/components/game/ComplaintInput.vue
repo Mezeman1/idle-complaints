@@ -321,9 +321,9 @@ function getSpeedBarColor(multiplier: number): string {
           </div>
           <div class="flex-grow">
             <!-- Target Complaint -->
-            <div class="mb-3 text-gray-800 dark:text-gray-200 text-sm">
+            <div class="mb-3 text-theme">
               <div class="font-medium mb-1">Complaint to type:</div>
-              <div class="p-2 bg-gray-50 dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-600">
+              <div class="p-2 bg-theme rounded border border-gray-200 dark:border-gray-600">
                 {{ store.currentComplaint }}
               </div>
             </div>
@@ -342,7 +342,7 @@ function getSpeedBarColor(multiplier: number): string {
                 <span>Accuracy: {{ Math.round(similarity) }}%</span>
                 <!-- Speed Multiplier Bar -->
                 <div v-if="upgradeStore.upgrades.speed_bonus.level" class="inline-flex items-center gap-2">
-                  <span class="text-yellow-500 dark:text-yellow-400">
+                  <span class="accent-theme">
                     Speed: {{ typingSpeedMultiplier.toFixed(1) }}x
                   </span>
                   <div class="w-32 h-2 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
@@ -359,7 +359,7 @@ function getSpeedBarColor(multiplier: number): string {
               <div class="flex items-center">
                 <span>
                   Points: {{ formatNumber(potentialPoints) }}
-                  <span v-if="currentMultiplier" class="text-blue-500 dark:text-blue-400">
+                  <span v-if="currentMultiplier" class="text-primary">
                     {{ currentMultiplier }}
                   </span>
                 </span>
@@ -367,17 +367,15 @@ function getSpeedBarColor(multiplier: number): string {
 
               <!-- Bottom Row: Buttons -->
               <div class="flex items-center justify-end gap-3">
-                <button v-if="showWordAssist" @click="handleWordAssist" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600
-                         disabled:opacity-50 disabled:cursor-not-allowed font-medium
-                         transition-colors duration-200" :disabled="wordAssistCooldown">
+                <button v-if="showWordAssist" @click="handleWordAssist"
+                  class="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed" :disabled="wordAssistCooldown">
                   Type Word
                   <span v-if="wordAssistCooldown" class="text-xs ml-1">
                     ({{ cooldownRemaining.toFixed(1) }}s)
                   </span>
                 </button>
-                <button @click="handleSubmit" class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600
-                         disabled:opacity-50 disabled:cursor-not-allowed font-medium
-                         transition-colors duration-200" :disabled="similarity < 90">
+                <button @click="handleSubmit" class="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  :disabled="similarity < 90">
                   Post Complaint
                 </button>
               </div>
