@@ -132,7 +132,7 @@ export const complaints: Complaint[] = [
   },
   {
     id: 30,
-    text: "I'm jealous of those ants. All they have to do is gather larvae and seeds—no typing required!",
+    text: "I'm jealous of those ants. All they have to do is gather larvae and seeds, no typing required!",
   },
   {
     id: 31,
@@ -144,7 +144,7 @@ export const complaints: Complaint[] = [
   },
   {
     id: 33,
-    text: "I tried to cross-breed an ant with my keyboard—now it’s stuck typing 'zzz...'",
+    text: "I tried to cross-breed an ant with my keyboard, now it's stuck typing 'zzz...'",
   },
   {
     id: 34,
@@ -184,7 +184,7 @@ export const complaints: Complaint[] = [
   },
   {
     id: 43,
-    text: 'Why is Reddit’s dark mode not dark enough? I want to brood in pitch-black gloom while I whine.',
+    text: 'Why is Reddit's dark mode not dark enough? I want to brood in pitch-black gloom while I whine.',
   },
   {
     id: 44,
