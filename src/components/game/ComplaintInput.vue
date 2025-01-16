@@ -8,10 +8,12 @@ import { formatNumber } from '@/utils/formatters'
 import PointsPopup from './PointsPopup.vue'
 import Toast from '@/components/base/Toast.vue'
 import { useAchievementStore } from '@/stores/achievement-store'
+import { useCollectionStore } from '@/stores/collection-store'
 
 const store = useStore()
 const upgradeStore = useUpgradeStore()
 const achievementStore = useAchievementStore()
+const collectionStore = useCollectionStore()
 const typingStartTime = ref(0)
 const typingSpeedMultiplier = ref(1)
 
@@ -90,6 +92,25 @@ function handleSubmit() {
     const upgradeStore = useUpgradeStore()
     const multiplier = upgradeStore.getTotalMultiplier
     const finalPoints = multiplier.times(basePoints).times(typingSpeedMultiplier.value).round()
+
+    // Calculate typing speed
+    const typingTime = (Date.now() - typingStartTime.value) / 1000 // Convert to seconds
+    const typingSpeed = store.typedText.length / typingTime // Characters per second
+
+    // Add to collection if not using word assist
+    const isWordAssistUsed = lastWordAssistTime.value > typingStartTime.value
+    if (!isWordAssistUsed) {
+      // Find the current complaint in the complaints array
+      const currentComplaint = complaints.find(c => c.text === store.currentComplaint)
+      if (currentComplaint) {
+        collectionStore.collectComplaint(
+          currentComplaint,
+          similarity.value,
+          typingSpeed
+        )
+      }
+    }
+
     store.addScore(finalPoints)
 
     // Track achievements

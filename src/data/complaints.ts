@@ -194,4 +194,144 @@ export const complaints: Complaint[] = [
     id: 45,
     text: 'I posted about complaining and got 200 comments complaining about my complaints. Reddit is a wild place.',
   },
+  {
+    id: 46,
+    text: "My coworker keeps giving 'helpful advice' about my typing posture. Now I need to complain about my chiropractor bills.",
+  },
+  {
+    id: 47,
+    text: "I just realized I'm complaining about complaining while complaining. Somebody call a philosopher!",
+  },
+  {
+    id: 48,
+    text: "The coffee cup says 'World’s Best Typist,' but it keeps spilling all over my keyboard. False advertising!",
+  },
+  {
+    id: 49,
+    text: "Our mandatory 'Wellness Session' was a silent meditation. How am I supposed to complain in silence?",
+  },
+  {
+    id: 50,
+    text: 'I tried to file a complaint about the complaint system, and they handed me a complaint form for that complaint complaint.',
+  },
+  {
+    id: 51,
+    text: 'Who decided that typing an entire paragraph equals one measly point? This system is rigged!',
+  },
+  {
+    id: 52,
+    text: 'I had a dream I was done complaining, but then I woke up and remembered my boss still exists.',
+  },
+  {
+    id: 53,
+    text: "I got warned by HR for being 'too negative.' Isn’t that the entire point of this game?!",
+  },
+  {
+    id: 54,
+    text: 'Can I unlock a VIP lounge where I can complain in peace—preferably with free snacks?',
+  },
+  {
+    id: 55,
+    text: "I demand a personal 'Complaint Assistant' to type my gripes for me. Hello? Anybody? I'm complaining about the absence of my assistant now.",
+  },
+  {
+    id: 56,
+    text: 'I’m complaining about the sheer number of complaints. My list is starting to complain it’s too long.',
+  },
+  {
+    id: 57,
+    text: 'My reflection told me to stop whining. I’m filing a complaint against my mirror for unsolicited advice.',
+  },
+  {
+    id: 58,
+    text: 'This game keeps telling me to calm down. Isn’t the whole point to ramp up my frustrations?',
+  },
+  {
+    id: 59,
+    text: 'I typed so much my keyboard asked for a raise. Now I’m complaining about sentient peripherals.',
+  },
+  {
+    id: 60,
+    text: "Who do I speak to about the 'Complaint Overload' error? I can’t even complain about complaining properly!",
+  },
+  {
+    id: 61,
+    text: 'I’ve tried complaining about life, and life complained back. Apparently, I can’t win at this.',
+  },
+  {
+    id: 62,
+    text: 'They promised a game with infinite potential, but all I see is infinite typing. My carpal tunnel disagrees.',
+  },
+  {
+    id: 63,
+    text: 'Just realized I get more points for complaining than I do for being productive. Society is doomed.',
+  },
+  {
+    id: 64,
+    text: 'I posted one of these complaints on social media and got banned for negativity. Figures.',
+  },
+  {
+    id: 65,
+    text: "Can I get a 'Skip Complaint' button? I’m complaining about the lack of a 'Skip Complaint' button.",
+  },
+  {
+    id: 66,
+    text: 'I tried calling tech support about my slow typing. They told me to take a typing course. Rude!',
+  },
+  {
+    id: 67,
+    text: 'Does complaining about gravity count? Because it keeps pulling me down.',
+  },
+  {
+    id: 68,
+    text: 'I’ve reached the point where I’m complaining out of habit. I need a complaint detox plan.',
+  },
+  {
+    id: 69,
+    text: 'My empathy left the chat. Now I’m complaining to myself about myself. It’s awkward.',
+  },
+  {
+    id: 70,
+    text: 'I built a complaint ‘machine’ but it complains about the game’s code being messy. Who taught it that?',
+  },
+  {
+    id: 71,
+    text: 'I asked for a day off from complaining. The game gave me a “silent protest” achievement. Not the same!',
+  },
+  {
+    id: 72,
+    text: 'Someone called me a professional whiner. I’d appreciate a paycheck if that’s the case.',
+  },
+  {
+    id: 73,
+    text: 'My coffee’s too hot, my code’s too cold, and my boss is lukewarm. Complaints are my comfort zone.',
+  },
+  {
+    id: 74,
+    text: 'If complaining burnt calories, I’d be ready for a marathon. Instead, I just have a tired keyboard.',
+  },
+  {
+    id: 75,
+    text: 'This game’s level progression is slower than my Monday mornings. I’m complaining about the pace of complaining!',
+  },
+  {
+    id: 76,
+    text: "Why is there no 'sarcastic retort' upgrade? I need that to refine my complaining skills.",
+  },
+  {
+    id: 77,
+    text: "I read the game’s FAQ for a solution. It literally said, 'Keep complaining.' So here I am.",
+  },
+  {
+    id: 78,
+    text: 'Life gave me lemons. I complained until the lemons started complaining about me.',
+  },
+  {
+    id: 79,
+    text: 'I tried to unionize all the complainers for better rant conditions. Management complained about that.',
+  },
+  {
+    id: 80,
+    text: "I started complaining about the dictionary being too short. Then I realized I'm the one who needs new words.",
+  },
 ]

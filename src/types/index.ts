@@ -57,3 +57,11 @@ export interface Achievement {
   earned: boolean
   progress: number // Current progress towards requirement
 }
+
+export interface ComplaintCollection extends Complaint {
+  stars: number
+  bestAccuracy: number
+  bestSpeed: number
+  timesTyped: number
+  lastTyped: number
+}

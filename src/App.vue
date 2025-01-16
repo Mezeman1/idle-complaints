@@ -6,6 +6,7 @@ import AchievementNotification from '@/components/base/AchievementNotification.v
 import IndexPage from '@/pages/IndexPage.vue'
 import Achievements from '@/views/Achievements.vue'
 import Navigation from '@/components/base/Navigation.vue'
+import Collection from '@/views/Collection.vue'
 
 const achievementStore = useAchievementStore()
 const store = useStore()
@@ -24,6 +25,9 @@ store.loadGame()
     </div>
     <div v-show="currentTab === 'achievements'">
       <Achievements />
+    </div>
+    <div v-show="currentTab === 'collection'">
+      <Collection />
     </div>
 
     <div class="fixed bottom-0 right-0 z-50 space-y-2 p-4">
