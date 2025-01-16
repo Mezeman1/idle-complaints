@@ -69,11 +69,11 @@ export const useStore = defineStore('main', {
         timestamp: Date.now(),
         upgrades: useUpgradeStore().getUpgradeState(),
       }
-      localStorage.setItem('gameState', JSON.stringify(saveData))
+      localStorage.setItem('idleComplaintsSave', JSON.stringify(saveData))
     },
 
     loadGame() {
-      const savedState = localStorage.getItem('gameState')
+      const savedState = localStorage.getItem('idleComplaintsSave')
       if (savedState) {
         const data = JSON.parse(savedState) as GameSaveData
         this.score = new Decimal(data.score)
@@ -95,7 +95,7 @@ export const useStore = defineStore('main', {
         highestScore: this.highestScore.toString(),
         darkMode: this.darkMode,
         timestamp: Date.now(),
-        upgrades: this.upgrades,
+        upgrades: useUpgradeStore().getUpgradeState(),
       }
       return btoa(JSON.stringify(saveData))
     },
