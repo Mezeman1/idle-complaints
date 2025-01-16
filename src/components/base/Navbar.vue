@@ -12,6 +12,7 @@ const showImportError = ref(false)
 const showImportSuccess = ref(false)
 const showExportSuccess = ref(false)
 const isResetting = ref(false)
+const isMobileMenuOpen = ref(false)
 
 function formatScore(score: Decimal): string {
   return formatNumber(score)
@@ -69,6 +70,11 @@ window.addEventListener('beforeunload', () => {
 // Add click outside handler
 function handleClickOutside(event: MouseEvent) {
   const target = event.target as HTMLElement
+  if (isMobileMenuOpen.value &&
+    !target.closest('.mobile-menu') &&
+    !target.closest('.mobile-menu-button')) {
+    isMobileMenuOpen.value = false
+  }
   if (showSaveModal.value && !target.closest('.save-modal') && !target.closest('.save-button')) {
     showSaveModal.value = false
     showResetConfirm.value = false
@@ -78,6 +84,10 @@ function handleClickOutside(event: MouseEvent) {
 function toggleSaveModal() {
   showSaveModal.value = !showSaveModal.value
   showResetConfirm.value = false
+}
+
+function toggleMobileMenu() {
+  isMobileMenuOpen.value = !isMobileMenuOpen.value
 }
 
 onMounted(() => {
@@ -93,12 +103,21 @@ onUnmounted(() => {
   <nav class="card-theme shadow-lg sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4">
       <div class="flex justify-between h-16">
-        <div class="flex space-x-4">
+        <!-- Mobile menu button -->
+        <div class="flex items-center md:hidden">
+          <button @click="toggleMobileMenu" class="mobile-menu-button p-2 rounded-lg hover:bg-theme text-theme">
+            <span class="text-2xl">☰</span>
+          </button>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex space-x-4">
           <slot name="left"></slot>
         </div>
+
         <div class="flex items-center space-x-4">
           <!-- Score Display -->
-          <div class="text-theme space-x-4">
+          <div class="hidden sm:flex text-theme space-x-4">
             <span>Score: {{ formatScore(store.score) }}</span>
             <span class="text-theme opacity-70">
               Highest: {{ formatScore(store.highestScore) }}
@@ -107,7 +126,7 @@ onUnmounted(() => {
 
           <!-- Buy Me a Coffee -->
           <a href="https://buymeacoffee.com/idleantfarm" target="_blank" rel="noopener noreferrer"
-            class="flex items-center space-x-2 px-3 py-1 rounded-lg bg-[#FFDD00] hover:bg-[#FFDD00]/90 transition-colors">
+            class="hidden sm:flex items-center space-x-2 px-3 py-1 rounded-lg bg-[#FFDD00] hover:bg-[#FFDD00]/90 transition-colors">
             <span class="text-black text-sm font-medium">☕ Buy me a coffee</span>
           </a>
 
@@ -121,6 +140,27 @@ onUnmounted(() => {
             <span v-if="store.darkMode" class="accent-theme">☀️</span>
             <span v-else class="text-theme opacity-70">🌙</span>
           </button>
+        </div>
+      </div>
+
+      <!-- Mobile Navigation Menu -->
+      <div v-if="isMobileMenuOpen" class="md:hidden mobile-menu border-t border-theme">
+        <div class="py-2">
+          <slot name="left"></slot>
+        </div>
+        <!-- Mobile Score Display -->
+        <div class="py-2 border-t border-theme text-theme">
+          <div class="px-2 py-1">Score: {{ formatScore(store.score) }}</div>
+          <div class="px-2 py-1 opacity-70">
+            Highest: {{ formatScore(store.highestScore) }}
+          </div>
+        </div>
+        <!-- Mobile Buy Me a Coffee -->
+        <div class="py-2 border-t border-theme">
+          <a href="https://buymeacoffee.com/idleantfarm" target="_blank" rel="noopener noreferrer"
+            class="block px-2 py-1">
+            <span class="text-theme">☕ Buy me a coffee</span>
+          </a>
         </div>
       </div>
     </div>
