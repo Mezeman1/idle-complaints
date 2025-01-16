@@ -62,30 +62,31 @@ export const useStore = defineStore('main', {
     },
 
     saveGame() {
-      const upgradeStore = useUpgradeStore()
       const saveData: GameSaveData = {
         score: this.score.toString(),
         highestScore: this.highestScore.toString(),
         darkMode: this.darkMode,
         timestamp: Date.now(),
-        upgrades: upgradeStore.getUpgradeState(),
+        upgrades: useUpgradeStore().getUpgradeState(),
       }
-      localStorage.setItem('idleComplaintsSave', JSON.stringify(saveData))
+      localStorage.setItem('gameState', JSON.stringify(saveData))
     },
 
     loadGame() {
-      const saveData = localStorage.getItem('idleComplaintsSave')
-      if (saveData) {
-        const data: GameSaveData = JSON.parse(saveData)
+      const savedState = localStorage.getItem('gameState')
+      if (savedState) {
+        const data = JSON.parse(savedState) as GameSaveData
         this.score = new Decimal(data.score)
-        this.highestScore = new Decimal(data.highestScore || data.score)
+        this.highestScore = new Decimal(data.highestScore)
         this.darkMode = data.darkMode
-        this.updateDarkMode()
+
+        // Initialize upgrades with saved state
         if (data.upgrades) {
           const upgradeStore = useUpgradeStore()
           upgradeStore.initializeFromSave(data.upgrades)
         }
       }
+      this.isInitialized = true
     },
 
     exportSave(): string {

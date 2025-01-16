@@ -74,6 +74,39 @@ export const useUpgradeStore = defineStore('upgrades', {
         type: 'multiplier',
         requires: 'auto_type_2',
       },
+      auto_type_3: {
+        id: 'auto_type_3',
+        name: 'Complaint Assembly Line',
+        description: 'Sets up a factory of professional complainers. Types {effect} characters per second.',
+        baseCost: new Decimal(2500),
+        level: 0,
+        effect: new Decimal(2),
+        unlockCost: new Decimal(1500),
+        type: 'automation',
+        requires: 'score_multi_2',
+      },
+      auto_type_4: {
+        id: 'auto_type_4',
+        name: 'Neural Network of Negativity',
+        description: 'Harnesses the power of AI to generate complaints at {effect} characters per second.',
+        baseCost: new Decimal(10000),
+        level: 0,
+        effect: new Decimal(5),
+        unlockCost: new Decimal(5000),
+        type: 'automation',
+        requires: 'auto_type_3',
+      },
+      auto_type_5: {
+        id: 'auto_type_5',
+        name: 'Quantum Complaint Computer',
+        description: 'Types complaints in multiple universes simultaneously at {effect} characters per second.',
+        baseCost: new Decimal(50000),
+        level: 0,
+        effect: new Decimal(10),
+        unlockCost: new Decimal(25000),
+        type: 'automation',
+        requires: 'auto_type_4',
+      },
     } as Record<string, Upgrade>,
   }),
 
@@ -187,7 +220,7 @@ export const useUpgradeStore = defineStore('upgrades', {
 
     getUpgradeState() {
       return Object.fromEntries(
-        Object.entries(this.upgrades).map(([id, upgrade]: [string, Upgrade]) => [
+        Object.entries(this.upgrades).map(([id, upgrade]) => [
           id,
           {
             ...upgrade,
