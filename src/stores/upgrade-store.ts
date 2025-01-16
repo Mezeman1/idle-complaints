@@ -50,7 +50,7 @@ export const useUpgradeStore = defineStore('upgrades', {
         unlockCost: new Decimal(200),
         type: 'assist',
         requires: 'word_assist',
-        maxLevel: 6,
+        maxLevel: 5,
       },
       auto_type_2: {
         id: 'auto_type_2',
