@@ -12,6 +12,8 @@ import { useAchievementStore } from '@/stores/achievement-store'
 const store = useStore()
 const upgradeStore = useUpgradeStore()
 const achievementStore = useAchievementStore()
+const typingStartTime = ref(0)
+const typingSpeedMultiplier = ref(1)
 
 // Initialize with first complaint
 if (!store.currentComplaint) {
@@ -69,6 +71,16 @@ function getNewComplaint() {
 
 function handleInput(event: Event) {
   const input = (event.target as HTMLInputElement).value
+  // Start timing when user starts typing
+  if (input.length === 1 && !typingStartTime.value) {
+    typingStartTime.value = Date.now()
+  }
+  // Calculate current typing speed and multiplier
+  if (typingStartTime.value && input.length > 0) {
+    const timeElapsed = Date.now() - typingStartTime.value
+    const speed = calculateTypingSpeed(input.length, timeElapsed)
+    typingSpeedMultiplier.value = getSpeedMultiplier(speed)
+  }
   store.typedText = input
 }
 
@@ -77,7 +89,7 @@ function handleSubmit() {
     const basePoints = new Decimal(calculatePoints(store.currentComplaint, similarity.value))
     const upgradeStore = useUpgradeStore()
     const multiplier = upgradeStore.getTotalMultiplier
-    const finalPoints = multiplier.times(basePoints).round()
+    const finalPoints = multiplier.times(basePoints).times(typingSpeedMultiplier.value).round()
     store.addScore(finalPoints)
 
     // Increment complaint counter and check achievements
@@ -102,6 +114,9 @@ function handleSubmit() {
 
     getNewComplaint()
     store.typedText = ''
+    // Reset typing speed tracking
+    typingStartTime.value = 0
+    typingSpeedMultiplier.value = 1
   }
 }
 
@@ -138,6 +153,7 @@ let popupCounter = 0
 const wordAssistCooldown = ref(false)
 const cooldownRemaining = ref(0)
 let cooldownInterval: ReturnType<typeof setInterval> | undefined
+const lastWordAssistTime = ref(0)
 
 function handleWordAssist() {
   if (wordAssistCooldown.value) return
@@ -158,7 +174,7 @@ function handleWordAssist() {
 
     // Check if complaint is complete
     if (store.typedText.trim() === currentComplaint.trim()) {
-      completeComplaint()
+      handleSubmit()
     }
   }
 
@@ -229,6 +245,23 @@ const currentMultiplier = computed(() => {
   const multiplier = upgradeStore.getTotalMultiplier
   return multiplier.eq(1) ? '' : `(${formatNumber(multiplier)}x multiplier)`
 })
+
+// Calculate typing speed (characters per second)
+function calculateTypingSpeed(chars: number, timeInMs: number): number {
+  return chars / (timeInMs / 1000)
+}
+
+// Calculate speed multiplier (1x to 3x based on typing speed)
+function getSpeedMultiplier(speed: number): number {
+  if (!upgradeStore.upgrades.speed_bonus.level) return 1
+
+  // Base speed thresholds (characters per second)
+  const minSpeed = 2  // 1x multiplier
+  const maxSpeed = 8  // 3x multiplier
+
+  const multiplier = 1 + (Math.min(Math.max(speed - minSpeed, 0), maxSpeed - minSpeed) / (maxSpeed - minSpeed)) * 2
+  return multiplier
+}
 </script>
 
 <template>
@@ -248,7 +281,7 @@ const currentMultiplier = computed(() => {
         <div class="flex items-start space-x-3">
           <div class="flex-shrink-0">
             <div class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
-              <span class="text-lg">😤</span>
+              <span class="text-lg">��</span>
             </div>
           </div>
           <div class="flex-grow">
@@ -271,6 +304,10 @@ const currentMultiplier = computed(() => {
             <div class="flex items-center justify-between mt-2 text-xs text-gray-500 dark:text-gray-400">
               <div class="space-x-4">
                 <span>Accuracy: {{ Math.round(similarity) }}%</span>
+                <span v-if="upgradeStore.upgrades.speed_bonus.level && typingSpeedMultiplier > 1"
+                  class="text-yellow-500 dark:text-yellow-400">
+                  Speed Bonus: {{ typingSpeedMultiplier.toFixed(1) }}x
+                </span>
                 <span>
                   Points: {{ formatNumber(potentialPoints) }}
                   <span v-if="currentMultiplier" class="text-blue-500 dark:text-blue-400">

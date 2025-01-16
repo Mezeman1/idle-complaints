@@ -40,6 +40,18 @@ export const useUpgradeStore = defineStore('upgrades', {
         unlockCost: new Decimal(75),
         type: 'assist',
       },
+      speed_bonus: {
+        id: 'speed_bonus',
+        name: 'Rapid Response Initiative',
+        description: 'Faster typing = bigger bonuses! Up to 3x points for lightning-fast complaints.',
+        baseCost: new Decimal(300),
+        level: 0,
+        maxLevel: 1,
+        effect: new Decimal(3),
+        unlockCost: new Decimal(200),
+        type: 'multiplier',
+        requires: 'word_assist',
+      },
       word_assist_speed: {
         id: 'word_assist_speed',
         name: 'Rage Typing Boost',
