@@ -9,7 +9,6 @@ import Navigation from '@/components/base/Navigation.vue'
 
 <template>
   <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-    <Navigation />
     <div class="container mx-auto p-4">
       <ComplaintInput />
       <AutoTypingPreview />
