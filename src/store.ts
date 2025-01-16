@@ -4,6 +4,7 @@ import type { GameState, GameSaveData } from '@/types'
 import { useUpgradeStore } from '@/stores/upgrade-store'
 import { upgradesList } from '@/data/upgrades'
 import { useAchievementStore } from '@/stores/achievement-store'
+import { useCollectionStore } from '@/stores/collection-store'
 
 function rehydrateUpgrade(upgrade: Upgrade): Upgrade {
   return {
@@ -77,6 +78,7 @@ export const useStore = defineStore('main', {
         timestamp: Date.now(),
         upgrades: useUpgradeStore().getUpgradeState(),
         achievements: useAchievementStore().getSaveState(),
+        collection: useCollectionStore().getSaveState(),
       }
       localStorage.setItem('idleComplaintsSave', JSON.stringify(saveData))
     },
@@ -99,6 +101,12 @@ export const useStore = defineStore('main', {
         if (data.achievements) {
           const achievementStore = useAchievementStore()
           achievementStore.initializeFromSave(data.achievements)
+        }
+
+        // Initialize collection with saved state
+        if (data.collection) {
+          const collectionStore = useCollectionStore()
+          collectionStore.initializeFromSave(data.collection)
         }
 
         // Calculate offline progress
