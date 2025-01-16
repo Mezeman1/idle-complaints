@@ -103,6 +103,7 @@ function handleSubmit() {
       id: popupCounter++,
       points: finalPoints,
       multiplier,
+      speedMultiplier: typingSpeedMultiplier.value,
       x,
       y,
     })
@@ -147,7 +148,7 @@ function handleContextMenu(event: MouseEvent) {
 }
 
 // Add popup management
-const popups = ref<{ id: number; points: Decimal; multiplier: Decimal; x: number; y: number }[]>([])
+const popups = ref<{ id: number; points: Decimal; multiplier: Decimal; speedMultiplier: number; x: number; y: number }[]>([])
 let popupCounter = 0
 
 const wordAssistCooldown = ref(false)
@@ -262,6 +263,16 @@ function getSpeedMultiplier(speed: number): number {
   const multiplier = 1 + (Math.min(Math.max(speed - minSpeed, 0), maxSpeed - minSpeed) / (maxSpeed - minSpeed)) * 2
   return multiplier
 }
+
+// Get color for speed bar based on multiplier
+function getSpeedBarColor(multiplier: number): string {
+  // Calculate progress from 0 to 1
+  const progress = (multiplier - 1) / 2
+
+  if (progress < 0.3) return '#FCD34D'  // yellow-300
+  if (progress < 0.6) return '#FB923C'  // orange-400
+  return '#EF4444'                      // red-500
+}
 </script>
 
 <template>
@@ -281,7 +292,7 @@ function getSpeedMultiplier(speed: number): number {
         <div class="flex items-start space-x-3">
           <div class="flex-shrink-0">
             <div class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
-              <span class="text-lg">��</span>
+              <span class="text-lg">😤</span>
             </div>
           </div>
           <div class="flex-grow">
@@ -301,13 +312,27 @@ function getSpeedMultiplier(speed: number): number {
             </textarea>
 
             <!-- Stats Bar -->
-            <div class="flex items-center justify-between mt-2 text-xs text-gray-500 dark:text-gray-400">
-              <div class="space-x-4">
+            <div class="flex flex-col space-y-3 mt-4 text-sm text-gray-500 dark:text-gray-400">
+              <!-- Top Row: Accuracy and Speed -->
+              <div class="flex items-center space-x-6">
                 <span>Accuracy: {{ Math.round(similarity) }}%</span>
-                <span v-if="upgradeStore.upgrades.speed_bonus.level && typingSpeedMultiplier > 1"
-                  class="text-yellow-500 dark:text-yellow-400">
-                  Speed Bonus: {{ typingSpeedMultiplier.toFixed(1) }}x
-                </span>
+                <!-- Speed Multiplier Bar -->
+                <div v-if="upgradeStore.upgrades.speed_bonus.level" class="inline-flex items-center gap-2">
+                  <span class="text-yellow-500 dark:text-yellow-400">
+                    Speed: {{ typingSpeedMultiplier.toFixed(1) }}x
+                  </span>
+                  <div class="w-32 h-2 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
+                    <div class="h-full transition-all duration-200" :style="{
+                      width: `${((typingSpeedMultiplier - 1) / 2) * 100}%`,
+                      backgroundColor: getSpeedBarColor(typingSpeedMultiplier)
+                    }">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Middle Row: Points -->
+              <div class="flex items-center">
                 <span>
                   Points: {{ formatNumber(potentialPoints) }}
                   <span v-if="currentMultiplier" class="text-blue-500 dark:text-blue-400">
@@ -315,18 +340,20 @@ function getSpeedMultiplier(speed: number): number {
                   </span>
                 </span>
               </div>
-              <div class="flex items-center gap-2">
-                <button v-if="showWordAssist" @click="handleWordAssist" class="px-3 py-1.5 bg-green-500 text-white rounded-full hover:bg-green-600
-                         disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-                  :disabled="wordAssistCooldown">
+
+              <!-- Bottom Row: Buttons -->
+              <div class="flex items-center justify-end gap-3">
+                <button v-if="showWordAssist" @click="handleWordAssist" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600
+                         disabled:opacity-50 disabled:cursor-not-allowed font-medium
+                         transition-colors duration-200" :disabled="wordAssistCooldown">
                   Type Word
-                  <span v-if="wordAssistCooldown" class="text-xs">
+                  <span v-if="wordAssistCooldown" class="text-xs ml-1">
                     ({{ cooldownRemaining.toFixed(1) }}s)
                   </span>
                 </button>
-                <button @click="handleSubmit" class="px-4 py-1.5 bg-blue-500 text-white rounded-full hover:bg-blue-600
-                         disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-                  :disabled="similarity < 90">
+                <button @click="handleSubmit" class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600
+                         disabled:opacity-50 disabled:cursor-not-allowed font-medium
+                         transition-colors duration-200" :disabled="similarity < 90">
                   Post Complaint
                 </button>
               </div>
