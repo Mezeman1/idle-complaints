@@ -11,6 +11,7 @@ declare module 'vue' {
     AutoTypingPreview: typeof import('./src/components/game/AutoTypingPreview.vue')['default']
     ComplaintInput: typeof import('./src/components/game/ComplaintInput.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
+    MiniDialogueScene: typeof import('./src/components/game/MiniDialogueScene.vue')['default']
     Navbar: typeof import('./src/components/base/Navbar.vue')['default']
     Navigation: typeof import('./src/components/base/Navigation.vue')['default']
     PointsPopup: typeof import('./src/components/game/PointsPopup.vue')['default']

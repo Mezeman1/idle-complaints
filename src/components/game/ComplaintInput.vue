@@ -9,11 +9,13 @@ import PointsPopup from './PointsPopup.vue'
 import Toast from '@/components/base/Toast.vue'
 import { useAchievementStore } from '@/stores/achievement-store'
 import { useCollectionStore } from '@/stores/collection-store'
+import { useDialogueStore } from '@/stores/dialogue-store'
 
 const store = useStore()
 const upgradeStore = useUpgradeStore()
 const achievementStore = useAchievementStore()
 const collectionStore = useCollectionStore()
+const dialogueStore = useDialogueStore()
 const typingStartTime = ref(0)
 const typingSpeedMultiplier = ref(1)
 
@@ -137,6 +139,7 @@ function handleSubmit() {
       popups.value = popups.value.filter(p => p.id !== popupCounter - 1)
     }, 1100)
 
+    dialogueStore.triggerDialogueForComplaint(store.currentComplaint)
     getNewComplaint()
     store.typedText = ''
     // Reset typing speed tracking

@@ -9,6 +9,7 @@ import Navigation from '@/components/base/Navigation.vue'
 import Collection from '@/views/Collection.vue'
 import Themes from '@/views/Themes.vue'
 import { useThemeStore } from '@/stores/theme-store'
+import MiniDialogueScene from '@/components/game/MiniDialogueScene.vue'
 
 const achievementStore = useAchievementStore()
 const store = useStore()
@@ -43,6 +44,8 @@ themeStore.applyTheme(themeStore.currentTheme)
           :name="achievement.name" :icon="achievement.icon" :bonus="achievement.bonus" />
       </TransitionGroup>
     </div>
+
+    <MiniDialogueScene />
   </div>
 </template>
 
