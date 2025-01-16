@@ -39,5 +39,5 @@ export default defineConfig({
   css: {
     preprocessorMaxWorkers: true,
   },
-  base: '/idle-complaint/',
+  base: '/idle-complaints/',
 })
