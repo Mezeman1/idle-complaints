@@ -151,7 +151,9 @@ function handleWordAssist() {
   const nextWord = remainingText.split(' ')[0]
 
   if (nextWord) {
-    store.typedText += (needsSpace ? ' ' : '') + nextWord + ' '
+    // Check if this is the last word
+    const isLastWord = nextWord === remainingText.trim()
+    store.typedText += (needsSpace ? ' ' : '') + nextWord + (!isLastWord ? ' ' : '')
     lastWordAssistTime.value = Date.now()
 
     // Check if complaint is complete
