@@ -84,4 +84,74 @@ export const complaints: Complaint[] = [
     id: 18,
     text: 'The water cooler is dispensing existential dread instead of water. This is not part of my job description.',
   },
+
+  // Additional complaints about juggling multiple projects and more meta humor
+  {
+    id: 19,
+    text: "Wait, this is the third idle game? I'm still typing complaints in the first one!",
+  },
+  {
+    id: 20,
+    text: "I'm pretty sure the dev got bored of the other games, but here I am, still typing away.",
+  },
+  {
+    id: 21,
+    text: "So the dev is starting another complaining game? I'm complaining about that new complaint game.",
+  },
+  {
+    id: 22,
+    text: 'I tried to complain in the previous game, but I got stuck in a loop. At least here I can type even more.',
+  },
+  {
+    id: 23,
+    text: "There are now more complaints than lines of code. I'm okay with that ratio.",
+  },
+  {
+    id: 24,
+    text: "I'm complaining that I have too many complaints across too many games. This is getting recursive.",
+  },
+  {
+    id: 25,
+    text: "The dev's indecision is rivaled only by my determination to complain about it. A match made in idle heaven.",
+  },
+  {
+    id: 26,
+    text: 'I heard the ants in that other game at least get seeds for their work. Where are my seeds?!',
+  },
+  {
+    id: 27,
+    text: "Why don't we have an ant colony automating these complaints? Ant synergy, anyone?",
+  },
+  {
+    id: 28,
+    text: "Idle Ant Farm has ants collecting seeds. Here, I'm just collecting carpal tunnel.",
+  },
+  {
+    id: 29,
+    text: 'If ants can carry 50 times their own weight, surely they can carry my workload of complaints!',
+  },
+  {
+    id: 30,
+    text: "I'm jealous of those ants. All they have to do is gather larvae and seeds—no typing required!",
+  },
+  {
+    id: 31,
+    text: "Where is my queen ant upgrade? I'm sick of being my own worker drone!",
+  },
+  {
+    id: 32,
+    text: "In Idle Ant Farm, at least the ants are loyal. My 'auto-complainers' just keep quitting!",
+  },
+  {
+    id: 33,
+    text: "I tried to cross-breed an ant with my keyboard—now it’s stuck typing 'zzz...'",
+  },
+  {
+    id: 34,
+    text: "I need an ant-based prestige system. I'd trade all these complaints for one unstoppable elite ant!",
+  },
+  {
+    id: 35,
+    text: "Idle Ant Farm taught me resource management. Here, I'm just managing my patience!",
+  },
 ]
